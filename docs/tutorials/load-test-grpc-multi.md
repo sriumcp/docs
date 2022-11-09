@@ -2,7 +2,7 @@
 template: main.html
 ---
 
-# Load Test and Validate a gRPC Endpoint
+# Load Test and Validate Multiple gRPC Endpoints
 
 Load test a Kubernetes gRPC service and validate its [service-level objectives (SLOs)](../getting-started/concepts.md#service-level-objectives). This is a [single-loop](../getting-started/concepts.md#iter8-experiment) [Kubernetes experiment](../getting-started/concepts.md#kubernetes-experiments).
 

@@ -118,21 +118,22 @@ nav:
   - Install Iter8: getting-started/install.md
   - Get help: getting-started/help.md
 - Tutorials:
-  - Load test HTTP with SLOs: tutorials/load-test-http.md
-  - Load test gRPC with SLOs: tutorials/load-test-grpc.md
-  - Chaos injection with SLOs: tutorials/chaos/slo-validation-chaos.md
+  - Load test & Validate HTTP: tutorials/load-test-http-multi.md
+  - Load test & Validate gRPC:
+    - Single endpoint: tutorials/load-test-grpc.md
+    - Multiple endpoints: tutorials/load-test-grpc-multi.md
   - Custom metrics:
     - One version: tutorials/custom-metrics/one-version.md
     - Two or more versions: tutorials/custom-metrics/two-or-more-versions.md
   - Integrations:
     - Local environment: tutorials/integrations/local.md
     - GitHub Actions: tutorials/integrations/ghactions.md
+    - Litmus: tutorials/integrations/litmus/slo-validation-chaos.md
     - Istio: tutorials/integrations/istio.md
     - Knative: tutorials/integrations/knative.md
     - Kserve: tutorials/integrations/kserve.md
     - Seldon: tutorials/integrations/seldon.md
     - Slack:  tutorials/integrations/slack.md
-    - Litmus: tutorials/integrations/litmus.md
     - Linkerd: tutorials/integrations/linkerd.md
   - Earlier versions:
     - Docs for Iter8 v0.8: https://iter8-tools.github.io/iter8/0.8/
@@ -150,6 +151,7 @@ nav:
     - Experiment parameters: user-guide/topics/parameters.md
     - Metrics: user-guide/topics/metrics.md
     - Namespace and group: user-guide/topics/group.md
+    - Debugging: user-guide/topics/debug.md
   - Commands:
     - iter8: user-guide/commands/iter8.md
     - iter8 launch: user-guide/commands/iter8_launch.md

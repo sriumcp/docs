@@ -2,13 +2,13 @@
 
 Perform a joint Iter8 and [LitmusChaos](https://litmuschaos.io/) experiment. This joint experiment enables you to verify if an app continues to be resilient (satisfies SLOs) in the midst of chaos (pod kill).
 
-In the tutorial, the app consists of a Kubernetes service and deployment. The chaos experiment kills the app's pods intermittently. At the same time, the Iter8 experiment performs a load test of the app and validates its [service-level objectives (SLOs)](../../getting-started/concepts.md#service-level-objectives). 
+In the tutorial, the app consists of a Kubernetes service and deployment. The chaos experiment kills the app's pods intermittently. At the same time, the Iter8 experiment performs a load test of the app and validates its [service-level objectives (SLOs)](../../../getting-started/concepts.md#service-level-objectives). 
 
 
 ![Chaos with SLO Validation](images/slo-validation-chaos.png)
 
 ???+ warning "Before you begin"
-    1. Try [your first experiment](../../getting-started/your-first-experiment.md). Understand the main [concepts](../../getting-started/concepts.md) behind Iter8 experiments.
+    1. Try [your first experiment](../../../getting-started/your-first-experiment.md). Understand the main [concepts](../../../getting-started/concepts.md) behind Iter8 experiments.
     2. Ensure that you have the [kubectl](https://kubernetes.io/docs/reference/kubectl/) CLI.
     3. Install [Litmus](https://litmuschaos.io/) in Kubernetes using [these steps](https://docs.litmuschaos.io/docs/getting-started/installation).
     4. Create the `httpbin` deployment file.
@@ -86,7 +86,7 @@ Launch the LitmusChaos and Iter8 experiments as described below.
     ```
 
     ??? note "About this Iter8 experiment"
-        This Iter8 experiment is similar to [your first Iter8 experiment](../../getting-started/your-first-experiment.md) with some notable changes. The `ready` task in this experiment also checks if the `chaosengine` resource exists before it starts, and in addition to the mean latency and error count SLOs, it verifies that the 99th percentile latency is under 100 msec.
+        This Iter8 experiment is similar to [your first Iter8 experiment](../../../getting-started/your-first-experiment.md) with some notable changes. The `ready` task in this experiment also checks if the `chaosengine` resource exists before it starts, and in addition to the mean latency and error count SLOs, it verifies that the 99th percentile latency is under 100 msec.
 
 *** 
 
@@ -174,5 +174,5 @@ Cleanup the Kubernetes cluster.
 
 ??? note "Some variations and extensions of this experiment"
     1. Reuse the above experiment with *your* app by replacing the `httpbin` app with *your* app, and modifying the experiment values appropriately.
-    2. Iter8 supports load testing and SLO validation for [gRPC services](../load-test-grpc.md). Try a joint chaos injection and SLO validation experiment for gRPC.
+    2. Iter8 supports load testing and SLO validation for [gRPC services](../../load-test-grpc.md). Try a joint chaos injection and SLO validation experiment for gRPC.
     3. Litmus makes it possible to inject [over 51 types of chaos](https://hub.litmuschaos.io/). Modify the LitmusChaos Helm chart with new templates in order to use any of these other types of chaos experiments.
