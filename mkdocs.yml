@@ -121,7 +121,7 @@ nav:
   - Load test HTTP with SLOs: tutorials/load-test-http.md
   - Load test gRPC with SLOs: tutorials/load-test-grpc.md
   - Chaos injection with SLOs: tutorials/chaos/slo-validation-chaos.md
-  - A/B experiments: tutorials/abn/abn.md
+  - A/B testing: tutorials/abn/abn.md
   - Automated experiments: tutorials/autox/autox.md
   - Custom metrics:
     - One version: tutorials/custom-metrics/one-version.md
