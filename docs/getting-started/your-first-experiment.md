@@ -4,7 +4,7 @@ template: main.html
 
 # Your First Experiment
 
-Run your first [Iter8 experiment](concepts.md#iter8-experiment) by load testing a Kubernetes HTTP service and validating its [service-level objectives (SLOs)](concepts.md#service-level-objectives). This is a [single-loop](concepts.md#iter8-experiment) [Kubernetes experiment](concepts.md#kubernetes-experiments).
+Run your first [Iter8 experiment](concepts.md#iter8-experiment) by load testing a Kubernetes HTTP service and validating its [service-level objectives (SLOs)](concepts.md#service-level-objectives). This is a [single-loop experiment](concepts.md#iter8-experiment).
 
 <p align='center'>
   <img alt-text="load-test-http" src="../images/http.png" />
@@ -49,7 +49,7 @@ iter8 k launch \
     
     The [assess](../user-guide/tasks/assess.md) task verifies if the app satisfies the specified SLOs: i) the mean latency of the service does not exceed 50 msec, and ii) there are no errors (4xx or 5xx response codes) in the responses. 
     
-    This is a [single-loop](concepts.md#iter8-experiment) [Kubernetes experiment](concepts.md#kubernetes-experiments) where all the previously mentioned tasks will run once and the experiment will finish. Hence, its [runner](concepts.md#runners) value is set to `job`.
+    This is a [single-loop experiment](concepts.md#iter8-experiment) where all the previously mentioned tasks will run once and the experiment will finish. Hence, its [runner](concepts.md#how-it-works) value is set to `job`.
 
 ***
 
@@ -81,7 +81,8 @@ iter8 k log
 ***
 
 ## Cleanup
-Remove the Iter8 experiment and the sample app from the Kubernetes cluster and the local Iter8 `charts` folder.
+Remove the Iter8 experiment and the sample app from the Kubernetes cluster.
+
 ```shell
 iter8 k delete
 kubectl delete svc/httpbin

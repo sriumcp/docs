@@ -62,7 +62,7 @@ iter8 k launch \
     
     The [assess](../../../user-guide/tasks/assess.md) task verifies if the app satisfies the specified SLOs: i) the mean latency of the service does not exceed 50 msec, and ii) there are no errors (4xx or 5xx response codes) in the responses. 
     
-    This is a [single-loop](../../../getting-started/concepts.md#iter8-experiment) [Kubernetes experiment](../../../getting-started/concepts.md#kubernetes-experiments) where all the previously mentioned tasks will run once and the experiment will finish. Hence, its [runner](../../../getting-started/concepts.md#runners) value is set to `job`.
+    This is a [single-loop experiment](../../../getting-started/concepts.md#iter8-experiment) where all the previously mentioned tasks will run once and the experiment will finish. Hence, its [runner](../../../getting-started/concepts.md#how-it-works) value is set to `job`.
 
 ***
 

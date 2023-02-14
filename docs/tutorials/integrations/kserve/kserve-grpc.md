@@ -73,7 +73,7 @@ iter8 -l trace k launch \
 
     The assess task verifies if the app satisfies the specified SLOs: i) there are no errors, ii) the mean latency of the service does not exceed 50 msec, and iii) the 97.5th percentile latency does not exceed 200 msec. 
     
-    This is a [single-loop](../../../getting-started/concepts.md#iter8-experiment) [Kubernetes experiment](../../../getting-started/concepts.md#kubernetes-experiments) where all the previously mentioned tasks will run once and the experiment will finish. Hence, its [runner](../../../getting-started/concepts.md#runners) value is set to `job`.
+    This is a [single-loop experiment](../../../getting-started/concepts.md#iter8-experiment) where all the previously mentioned tasks will run once and the experiment will finish. Hence, its [runner](../../../getting-started/concepts.md#how-it-works) value is set to `job`.
 
 ***
 

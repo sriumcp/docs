@@ -4,7 +4,7 @@ template: main.html
 
 # Load Test gRPC with SLOs
 
-Load test a Kubernetes gRPC service and validate its [service-level objectives (SLOs)](../getting-started/concepts.md#service-level-objectives). This is a [single-loop](../getting-started/concepts.md#iter8-experiment) [Kubernetes experiment](../getting-started/concepts.md#kubernetes-experiments).
+Load test a Kubernetes gRPC service and validate its [service-level objectives (SLOs)](../getting-started/concepts.md#service-level-objectives). This is a [single-loop experiment](../getting-started/concepts.md#iter8-experiment).
 
 <p align='center'>
   <img alt-text="load-test-grpc" src="../images/grpc.png" />
@@ -48,7 +48,7 @@ iter8 k launch \
     
     The [assess](../user-guide/tasks/assess.md) task verifies if the app satisfies the specified SLOs: i) there are no errors, ii) the mean latency of the service does not exceed 50 msec, and iii) the `97.5`th percentile latency does not exceed 200 msec. 
     
-    This is a [single-loop](../getting-started/concepts.md#iter8-experiment) [Kubernetes experiment](../getting-started/concepts.md#kubernetes-experiments) where all the previously mentioned tasks will run once and the experiment will finish. Hence, its [runner](../getting-started/concepts.md#runners) value is set to `job`.
+    This is a [single-loop experiment](../getting-started/concepts.md#iter8-experiment) where all the previously mentioned tasks will run once and the experiment will finish. Hence, its [runner](../getting-started/concepts.md#how-it-works) value is set to `job`.
 
 ??? note "Some variations and extensions of this experiment"
     1. The [grpc task](../user-guide/tasks/grpc.md) can be configured with load related parameters such as the total number of requests, requests per second, or number of concurrent connections.
@@ -62,7 +62,8 @@ Assert experiment outcomes, view experiment report, view experiment logs, and cl
 ***
 
 ## Cleanup
-Remove the Iter8 experiment and the sample app from the Kubernetes cluster and the local Iter8 `charts` folder.
+Remove the Iter8 experiment and the sample app from the Kubernetes cluster.
+
 ```shell
 iter8 k delete
 kubectl delete svc/hello

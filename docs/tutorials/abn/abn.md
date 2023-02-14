@@ -2,37 +2,42 @@
 template: main.html
 ---
 
-# A/B testing an upstream (backend) service
+# A/B testing an upstream service (backend)
 
-This tutorial describes the process of [A/B testing]((../../user-guide/topics/ab_testing.md) [an upstream service](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/intro/terminology) in a distributed Kubernetes app. In this and other Iter8 tutorials, the terms `backend` and `upstream service` are used synonymously, and the terms `frontend` and `downstream service` are used synonymously. 
+This tutorial describes the process of [A/B testing](../../user-guide/topics/ab_testing.md) [an upstream service (backend)](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/intro/terminology) in a distributed application. The process of A/B testing a backend involves the following steps.
 
-The process of A/B testing a backend involves the following steps.
+1. Deploy a candidate version of the backend.
+2. Split traffic from the frontend, to the stable and candidate versions of the backend, while ensuring [user stickiness](sticky).
+3. Collectbusiness metrics for backend versions.
+4. Promote the winning version of the backend as the latest stable version.
 
-1. Deploying a candidate version of the backend.
-2. Splitting the traffic from the frontend to the stable and candidate versions, while ensuring [user stickiness](sticky).
-3. Collecting business metrics for backend versions.
-4. Promoting the winning version of the backend as the latest stable version.
+Iter8 automates steps 2 and 3 while decoupling the frontend and backend: the frontend code and configuration is unaffected even as new versions of the backend are deployed, A/B tested, promoted as the latest stable version, and/or deleted. The following picture illustrates A/B testing of a backend in Iter8.
 
-Iter8 automates steps 2 and 3 while decoupling the frontend and backend components: the frontend code and configuration is unaffected even as candidate versions of the backend are deployed, A/B tested, promoted as the latest stable version, and/or deleted. 
+![AB testing](images/abn.tldr.png){: style="width:80%"}
 
-Iter8 associates each version of the service that is being A/B tested with a [track number](tracks). The stable version is associated with Track 1, while the candidate version is associated with track 2. The following picture illustrates A/B testing of a backend in Iter8.
-
-![AB testing](images/abn.tldr.png)
-
+???+ note "Iter8 terminology and conventions"
+    1. The terms `backend` and `upstream service` are synonymous.
+    2. The terms `frontend` and `downstream service` are synonymous.
+    3. The term `app` refers to the subject of an experiment (`backend` in this tutorial). 
+    4. App `versions` are numbered. Version 1 refers to the stable version. Versions 2, 3, ... refer to candidates.
 
 ***
  
 ## Deploy Iter8 service
 
-Configure and deploy the [Iter8 service](iter8service) as follows. This configuration provides information about the [persistent storage used by the Iter8 service](storage), and the backend that is A/B tested using Iter8.
+Configure and deploy the [Iter8 service](iter8service). Iter8 service configuration provides information about [persistent storage used by Iter8](storage), and the apps that are A/B tested.
+
+???+ warning "Before you run the following commands"
+    Set the `$STORAGE_CLASS_NAME` environment variable to the name of the StorageClass resource used to provision the [persistent volume for Iter8 service](storage). For example, local testing and development, if you are using a `Kind` cluster, you could `export STORAGE_CLASS_NAME=standard`.
 
 ```shell
 cat << EOF > values.yaml
-storageClassName: iter8
-abn:
+storageClass:
+  name: $STORAGE_CLASS_NAME
+apps:
 - name: recommender
   namespace: test
-  tracks:
+  versions:
   - weight: 3
     resources:
     - name: recommender-stable
@@ -54,23 +59,23 @@ helm install --repo https://iter8-tools.github.io/hub iter8-service iter8-servic
 
 ??? note "Documentation for `values.yaml`"
     ```yaml
-    # name of the Kubernetes storage class used by the Iter8 service
-    storageClassName: iter8
+    # name of the Kubernetes StorageClass resource used by the Iter8 service
+    storageClassName: standard
     # this section specifies Iter8 configuration for A/B/n testing
-    abn:
-      # name of the service that is A/B testing using Iter8
+    apps:
+      # name of the app that is A/B testing using Iter8
       # choose a unique name
     - name: recommender
-      # namespace of the service
+      # namespace of the app
       namespace: test
-      # a service must always have a stable version; it may have multiple candidate versions
-      # the current stable version is served by track 1; 
-      # candidate versions are served by the other tracks
-      tracks:
-        # users are split across tracks in proportion to their weights
+      # an app must always have a stable version; it may have multiple candidate versions
+      # the current stable version is served by version 1; 
+      # candidate versions are served by the other versions
+      versions:
+        # users are split across versions in proportion to version weights
         # weights must be positive (default 1)
       - weight: 3
-        # each track can have multiple resources associated with it
+        # each version can have multiple resources associated with it
         resources:
           # name of the resource
         - name: recommender-stable
@@ -80,7 +85,7 @@ helm install --repo https://iter8-tools.github.io/hub iter8-service iter8-servic
         - name: recommender-stable
           # deploy is shorthand for k8s deployment
           type: deploy
-        # second track with the default weight of 1
+        # second version with the default weight of 1
       - resources:
         - name: recommender-candidate
           type: svc
@@ -88,10 +93,10 @@ helm install --repo https://iter8-tools.github.io/hub iter8-service iter8-servic
           type: deploy
     ```
 
-## Deploy sample app
+## Deploy sample application
 Deploy the sample application.
 === "Frontend"
-    Deploy the frontend in the language of your choice:
+    Deploy the frontend in the language of your choice.
     === "node"
         ```shell
         kubectl create deployment frontend --image=iter8/abn-sample-frontend-node:0.13
@@ -112,7 +117,7 @@ Deploy the sample application.
     kubectl expose deployment recommender-stable --port=8091
     ```
 
-    > The resources created above are the same as the resources listed under Track 1 in the Iter8 service configuration.
+    > The resources created above are the same as the resources listed under Version 1 in the Iter8 service configuration.
 
 
 ## Generate load
@@ -128,29 +133,33 @@ curl -s https://raw.githubusercontent.com/iter8-tools/docs/main/samples/abn-samp
 ```
 
 ## Deploy candidate version
-Deploy the candidate version of the backend. The candidate version is associated with Track 2.
+Deploy the candidate version of the backend. The candidate version is associated with Version 2.
 
 ```shell
 kubectl create deployment recommender-candidate --image=iter8/abn-sample-backend:0.13-v2
 kubectl expose deployment recommender-candidate --port=8091
 ```
 
-> The resources created above are the same as the resources listed under Track 2 in the Iter8 service configuration.
+> The resources created above are the same as the resources listed under Version 2 in the Iter8 service configuration.
 
-??? note "Behind the scenes: traffic splitting, user stickiness, and metrics"
+??? note "Behind the scenes"
+    Suppose the app under consideration is an online store. Users can use the `List()` API of the frontend to view a ranked list of products. They can use the `Buy()` API of the frontend to buy items in their shopping cart. When the frontend receives a `List()` request, it invokes the `Rank()` API of the bankend to receive a list of product recommendations, and surfaces this to the user.
+
+    The following sequence diagram illustrates how users, frontend, backend, and the Iter8 service interact. The frontend invokes the `Lookup(name, user)` API of the Iter8 service to determine the backend version; here, `name` is the name of the app being A/B tested (`recommender`) in this tutorial, and `user` is the unique ID of the user. It uses this version to receive recommendations from the backend and answer the user query. When the user buys items, it uses the `WriteMetric(name, user, metric, value)` API of the Iter8 service to report business metrics (such as total price, and the number of items in this example).
+
     ```mermaid
     sequenceDiagram
         actor U1 as User1
         actor U2 as User2
         participant F as Frontend
-        participant B1 as Backend <br> track-1
-        participant B2 as Backend <br> track-2
+        participant B1 as Backend <br> Version 1
+        participant B2 as Backend <br> Version 2
         participant I as Iter8 service
         U1->>F: List()
         activate F
-        F->>I: Lookup()
+        F->>I: Lookup(name, user)
         activate I
-        I-->>F: Track 1
+        I-->>F: Version 1
         deactivate I
         F->>B1: Rank()
         B1-->>F: Recommendations
@@ -158,9 +167,9 @@ kubectl expose deployment recommender-candidate --port=8091
         deactivate F
         U2->>F: List()
         activate F
-        F->>I: Lookup()
+        F->>I: Lookup(name, user)
         activate I
-        I-->>F: Track 2
+        I-->>F: Version 2
         deactivate I
         F->>B2: Rank()
         B2-->>F: Recommendations
@@ -168,13 +177,13 @@ kubectl expose deployment recommender-candidate --port=8091
         deactivate F
         U2->>F: Buy()
         activate F
-        F->>I: WriteMetric()
+        F->>I: WriteMetric(name, user, metric, value)
         deactivate F
         U2->>F: List()
         activate F
-        F->>I: Lookup()
+        F->>I: Lookup(name, user)
         activate I
-        I-->>F: Track 2
+        I-->>F: Version 2
         deactivate I
         F->>B2: Rank()
         B2-->>F: Recommendations
@@ -182,8 +191,17 @@ kubectl expose deployment recommender-candidate --port=8091
         deactivate F
     ```
 
+    The Iter8 service provides the following guarantees:
+    
+    1. Weight: the number of users assigned to each version is (approximately) proportional to its weight.
+    
+    2. User stickiness: when two or more versions of a backend are deployed, for a given user, every `Lookup(name, user)` call returns the same version.
+    
+    3. Readiness: when a version is returned by a `Lookup(name, user)` call, the Kubernetes resources corresponding to this version are guaranteed to exist, and be ready to serve frontend requests. In particular, this guarantee implies that to you can update any version, or delete candidate versions at any point in time with zero downtime (i.e., without loss of requests from the frontend).
 
 ## Launch experiment
+
+Use the Iter8 CLI to launch the Iter8 experiment in the cluster.
 
 ```shell
 iter8 k launch \
@@ -193,16 +211,20 @@ iter8 k launch \
 --set cronjobSchedule="*/1 * * * *"
 ```
 
+??? note "About this experiment"
+    This experiment consists of a single [task](../../getting-started/concepts.md#iter8-experiment), namely, [abnmetrics](../../user-guide/tasks/abnmetrics.md).
 
-## Inspect experiment report
+    The abnmetrics task fetches metrics from the [Iter8 service](iter8service), and is parameterized by the name of the app being A/B tested (`recommender` in this tutorial).
 
-Inspect the metrics:
+    This is a [multi-loop experiment](../../getting-started/concepts.md#iter8-experiment). Hence, its [runner](../../getting-started/concepts.md#how-it-works) value is set to `cronjob`. The `cronjobSchedule` expression specifies that each experiment loop (i.e., the experiment task) is scheduled for execution periodically once every minute. This enables Iter8 to refresh the metric values during each loop.
+
+View the experiment report as follows.
 
 ```shell
 iter8 k report
 ```
 
-??? note "Sample output from report"
+??? note "Sample experiment report"
     ```
     Experiment summary:
     *******************
@@ -216,54 +238,40 @@ iter8 k report
     Latest observed values for metrics:
     ***********************************
 
-    Metric                   | Track 1 | Track 2
-    -------                  | -----        | -----
-    abn/sample_metric/usercount  | 282        | 629
-    abn/sample_metric/count  | 35.00        | 28.00
-    abn/sample_metric/max    | 99.00        | 100.00
-    abn/sample_metric/mean-per-count   | 56.31        | 52.79
-    abn/sample_metric/mean-per-user   | 561.31        | 522.79
-    abn/sample_metric/min    | 0.00         | 1.00
-    abn/sample_metric/stddev-per-count | 28.52        | 31.91
-    abn/sample_metric/stddev-per-user | 283.52        | 314.91
+    Metric                                  | Version 1   | Version 2
+    -------                                 | -----     | -----
+    abn/recommender/duration                | 368 (hr)  | 120 (hr)
+    abn/recommender/numusers                | 628       | 149
+    abn/recommender/lookups                 | 2725      | 822
+    abn/recommender/sales/mean              | 51.31     | 52.79
+    abn/sample_metric/stddev                | 82.52     | 69.89
+    abn/recommender/sales/conversion        | 82        | 43
+    abn/recommender/sales/conversion-rate   | 13.05 (%) | 28.85 (%)
     ```
-The output allows you to compare the versions against each other and select a winner. Since the experiment runs periodically, the values in the report will change over time.
 
-Once a winner is identified, the experiment can be terminated, the winner can be promoted, and the candidate version(s) can be deleted.
+The above experiment report allows you to compare versions and select a winner. Since this is [multi-loop experiment](../../getting-started/concepts.md#iter8-experiment), the values in the report are updated with each loop. 
 
-To delete the experiment:
-
-```shell
-iter8 k delete
-```
+If the candidate version is deemed the winner, it can be promoted as the latest stable version, and resources corresponding to Version 2 can be deleted.
 
 ## Promote candidate version
 
-Delete the candidate version:
+Promote the candidate version as the latest stable version.
 
 ```shell
-kubectl delete deployment backend-candidate-1 
-kubectl delete service backend-candidate-1
+kubectl set image deployment/recommender-stable \
+abn-sample-backend=iter8/abn-sample-backend:0.13-v2
 ```
 
-Update the version associated with the baseline track identifier *backend*:
-
-```shell
-kubectl set image deployment/backend abn-sample-backend=iter8/abn-sample-backend:0.13-v2
-```
+At this point, Versions 1 and 2 both have the same image. You can delete all the resources associated with Version 2, leaving Version 1 as the one and only deployed version of the app.
 
 ## Cleanup
 
-### Delete sample sample
+Remove the Iter8 experiment, the sample application, and the Iter8 service from the Kubernetes cluster.
 
 ```shell
+iter8 k delete
 kubectl delete \
-deploy/frontend deploy/backend deploy/backend-candidate-1 \
-service/frontend service/backend service/backend-candidate-1
-```
-
-### Uninstall the A/B/n service
-
-```shell
+deploy/frontend deploy/recommender-stable deploy/recommender-candidate \
+service/frontend service/recommender-stable service/recommender-candidate
 helm delete iter8-service -n iter8-system
 ```

@@ -56,42 +56,12 @@
       min-width: 50%;
     }
   }
-
-  // Button
-  .md-button {
-    margin-top: px2rem(20px);
-    margin-right: px2rem(10px);
-    color: inherit;
-
-    // Button on focus/hover
-    &:focus,
-    &:hover {
-      color: #96034a;
-      background-color: #ffffff;
-      border-color: #ffffff;
-    }
-
-    // reverse button
-    &--reverse {
-      color: #96034a;
-      background-color: #ffffff;
-      border-color: #ffffff;
-
-      &:focus,
-      &:hover {
-        color: inherit;
-        background-color: inherit;
-        border-color: inherit;
-        }
-    }
-  }
-
-  .text-large {
-    font-size: 1rem;
-  }
-
-
 }
+
+.text-large {
+  font-size: 1rem;
+}
+
 
 // icon
 @keyframes heart {
@@ -137,4 +107,39 @@
 .text-center {
   text-align: center;
   padding: px2rem(20px);
+}
+
+.center {
+  margin: auto;
+  width: 80%;  
+  padding: px2rem(20px);
+
+  // Button
+  .md-button {
+    margin-top: px2rem(20px);
+    margin-right: px2rem(10px);
+    color: inherit;
+
+    // Button on focus/hover
+    &:focus,
+    &:hover {
+      color: #96034a;
+      background-color: #ffffff;
+      border-color: #ffffff;
+    }
+
+    // reverse button
+    &--reverse {
+      color: #96034a;
+      background-color: #ffffff;
+      border-color: #ffffff;
+
+      &:focus,
+      &:hover {
+        color: inherit;
+        background-color: inherit;
+        border-color: inherit;
+        }
+    }
+  }
 }

@@ -3,52 +3,76 @@ template: main.html
 ---
 
 # Iter8
+
+## What is Iter8?
 Iter8 is the Kubernetes release optimizer built for DevOps, MLOps, SRE and data science teams. Iter8 makes it easy to ensure that Kubernetes apps and ML models perform well and maximize business value.
 
-Iter8 supports the following use-cases.
+## What is an Iter8 experiment?
+Iter8 introduces the notion of an *experiment* to facilitate various release optimization use-cases, as illustrated in the picture below.
 
-1.  Performance testing and SLO validation of HTTP services.
-2.  Performance testing and SLO validation of gRPC services.
-3.  SLO validation using custom metrics from any database(s) or REST API(s).
-4.  A/B/n experiments.
+![Iter8 experiment](images/experiment.tldr.png)
+<!-- {: style="width:80%"} -->
+
+## Use-cases
+
+1.  A/B/n testing with traffic splitting, user stickiness, and business metrics collection and assessment.
+2.  Performance testing and service-level objective (SLO) validation of HTTP and gRPC services.
+3.  Canary testing with traffic splitting and SLO validation with metrics from any DB (e.g., Prometheus).
+4.  Traffic mirroring and SLO validation with metrics from any DB (e.g., Prometheus).
+
+## How it works
+A brief overview of how Iter8 works for the various use-cases is presented below.
+
+=== "A/B/n testing"
+    The following picture illustrates A/B/n testing of a `backend` in a distributed Kubernetes app.
+    
+    - **The frontend** uses the Iter8 SDK to lookup backend versions, split traffic between backend versions, and push business metrics. 
+    - **Iter8 experiment** fetches metrics and assesses versions. 
+    - **Iter8 service** tracks available versions, and responds to the Iter8 SDK requests made by the frontend, and metrics requests made by the Iter8 experiment.
+
+    ![A/B testing](../tutorials/abn/images/abn.tldr.png){: style="width:80%"}
 
 
-## Iter8 experiment
-Iter8 introduces the notion of an *experiment*. An experiment is simply a list of tasks that are executed in a specific sequence.
+=== "Performance testing"
+    **Iter8 experiment** checks if the app is ready, generates load, collects metrics, and validates service-level objectives (SLOs).
+    === "HTTP"
 
-<p align='center'>
-  <img alt-text="Iter8 experiment" src="../../images/authoring.png" width="40%" />
-</p>
+        ![HTTP performance testing](images/http.png)
 
-Iter8 provides a variety of configurable tasks. Authoring an experiment is as simple as specifying the names of the tasks and specifying their parameter values. The following are some examples of tasks provided by Iter8.
+    === "gRPC"
 
-1.  Tasks for **generating load and collecting built-in metrics** for HTTP and gRPC services.
-2.  A task for verifying **service-level objectives (SLOs)** for apps or app versions.
-3.  A task for fetching **custom metrics** from any database(s) or REST API(s).
-4.  A task for checking if an object **exists** in the Kubernetes cluster and is **ready**.
+        ![gRPC performance testing](../tutorials/images/grpc.png)
 
-In addition to predefined tasks, Iter8 packs a number of powerful features that facilitate experimentation. They include the following.
+=== "Canary testing"
+    - **Iter8 experiment** checks if the app is ready, fetches metrics from a database (e.g., Prometheus), and validates service-level objectives (SLOs). 
+    - **Service mesh (e.g., Istio)** handles traffic splitting.
 
-1.  **HTML/text reports** that promote end-user understanding of experiment results through visual insights.
-2.  **Assertions** that verify whether the target app satisfies the specified SLOs or not during/after an experiment.
-3.  **Multi-loop experiments** that can be executed periodically instead of just once (single-loop).
-4.  **Iter8 GitHub Action** that enables you to invoke the Iter8 CLI within a GitHub Actions workflow.
+    ![Canary testing](../tutorials/custom-metrics/images/two-or-more-versions.png)
 
-## Imperative and declarative experiments
+=== "Traffic mirroring"
+    - **Iter8 experiment** checks if the app is ready, fetches metrics from a database (e.g., Prometheus), and validates service-level objectives (SLOs).
+    - **Service mesh (e.g., Istio)** handles traffic mirroring.
+    
+    ![Canary testing](../tutorials/custom-metrics/images/two-or-more-versions.png)
 
-You can use the Iter8 CLI to launch and manage experiments through the command line. This is the imperative style of experimentation. You can also use the Iter8 Autox controller to launch and manage experiments declaratively. [AutoX](../user-guide/topics/autox.md), short for “automated experiments”, allows Iter8 to detect changes to your Kubernetes resources objects and automatically start new experiments, allowing you to test your applications as soon as you release a new version.
+## Features
 
-## Under the covers
-In order to execute an experiment inside Kubernetes, Iter8 uses a Kubernetes [job](https://kubernetes.io/docs/concepts/workloads/controllers/job/) (single-loop) or a Kubernetes [cronjob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) (multi-loop) workload, along with a Kubernetes secret. Iter8 instantiates all experiments using a Helm chart, that is also predefined and provided by Iter8.
+* Flexible: Iter8 is designed to work with any Kubernetes resource type (including custom resources), any service mesh, any CI/CD platform, and any metrics database
+* Automated experiments with Iter8 AutoX controller
+* Manual experiments with Iter8 CLI
+* Rich text/HTML experiment reports with metrics-based version assessment
+* Simple declarative experiment specification
+* Single and multi-loop experiments
+* GitHub action
+* GitHub and Slack notifications
 
-<p align='center'>
-  <img alt-text="Iter8 experiment" src="../../images/underthecovers.png" width="100%" />
-</p>
 
-## Implementation
-Iter8 is written in `go` and builds on a few awesome open source projects including:
+## Development Status
+Iter8 is being actively developed by the community builds on a few awesome open source projects including:
 
 - [Helm](https://helm.sh)
 - [Fortio](https://github.com/fortio/fortio)
 - [ghz](https://ghz.sh)
 - [plotly.js](https://github.com/plotly/plotly.js)
+
+Iter8 releases can be found [here](https://github.com/iter8-tools/iter8).

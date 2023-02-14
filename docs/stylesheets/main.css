@@ -4,7 +4,7 @@
 
 .mdx-container {
   padding-top: 2rem;
-  background: linear-gradient(to bottom, #cd0404, #430195);
+  background: linear-gradient(to bottom, hsl(0deg, 96%, 41%), rgb(67, 1, 149));
   min-height: 44.2rem;
 }
 
@@ -40,27 +40,8 @@
     min-width: 50%;
   }
 }
-.mdx-hero .md-button {
-  margin-top: 1rem;
-  margin-right: 0.5rem;
-  color: inherit;
-}
-.mdx-hero .md-button:focus, .mdx-hero .md-button:hover {
-  color: #96034a;
-  background-color: #ffffff;
-  border-color: #ffffff;
-}
-.mdx-hero .md-button--reverse {
-  color: #96034a;
-  background-color: #ffffff;
-  border-color: #ffffff;
-}
-.mdx-hero .md-button--reverse:focus, .mdx-hero .md-button--reverse:hover {
-  color: inherit;
-  background-color: inherit;
-  border-color: inherit;
-}
-.mdx-hero .text-large {
+
+.text-large {
   font-size: 1rem;
 }
 
@@ -98,6 +79,32 @@
 .text-center {
   text-align: center;
   padding: 1rem;
+}
+
+.center {
+  margin: auto;
+  width: 80%;
+  padding: 1rem;
+}
+.center .md-button {
+  margin-top: 1rem;
+  margin-right: 0.5rem;
+  color: inherit;
+}
+.center .md-button:focus, .center .md-button:hover {
+  color: #96034a;
+  background-color: #ffffff;
+  border-color: #ffffff;
+}
+.center .md-button--reverse {
+  color: #96034a;
+  background-color: #ffffff;
+  border-color: #ffffff;
+}
+.center .md-button--reverse:focus, .center .md-button--reverse:hover {
+  color: inherit;
+  background-color: inherit;
+  border-color: inherit;
 }
 
 .md-header__title {

@@ -53,7 +53,7 @@ iter8 k launch \
     
     The [assess](../../user-guide/tasks/assess.md) task verifies if the app satisfies the specified SLOs: i) there are no errors, and ii) the mean latency of the app does not exceed 100 msec. 
 
-    This is a [multi-loop](../../getting-started/concepts.md#iter8-experiment) [Kubernetes experiment](../../getting-started/concepts.md#kubernetes-experiments). Hence, its [runner](../../getting-started/concepts.md#runners) value is set to `cronjob`. The `cronjobSchedule` expression specifies that each experiment loop (i.e., the sequence of tasks in the experiment) is scheduled for execution periodically once every minute. This enables Iter8 to refresh the metric values and perform SLO validation using the latest metric values during each loop.
+    This is a [multi-loop](../../getting-started/concepts.md#iter8-experiment) [Kubernetes experiment](../../getting-started/concepts.md#kubernetes-experiments). Hence, its [runner](../../getting-started/concepts.md#how-it-works) value is set to `cronjob`. The `cronjobSchedule` expression specifies that each experiment loop (i.e., the sequence of tasks in the experiment) is scheduled for execution periodically once every minute. This enables Iter8 to refresh the metric values and perform SLO validation using the latest metric values during each loop.
 
 ***
 
