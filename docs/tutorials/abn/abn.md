@@ -13,7 +13,7 @@ This tutorial describes the process of [A/B testing](../../user-guide/topics/ab_
 
 Iter8 automates steps 2 and 3 while decoupling the frontend and backend: the frontend code and configuration is unaffected even as new versions of the backend are deployed, A/B tested, promoted as the latest stable version, and/or deleted. The following picture illustrates A/B testing of a backend in Iter8.
 
-![AB testing](images/abn.tldr.png){: style="width:80%"}
+![AB testing](images/abn.png){: style="width:80%"}
 
 ???+ note "Iter8 terminology and conventions"
     1. The terms `backend` and `upstream service` are synonymous.

@@ -10,7 +10,7 @@ Iter8 is the Kubernetes release optimizer built for DevOps, MLOps, SRE and data 
 ## What is an Iter8 experiment?
 Iter8 introduces the notion of an *experiment* to facilitate various release optimization use-cases, as illustrated in the picture below.
 
-![Iter8 experiment](images/experiment.tldr.png)
+![Iter8 experiment](../images/iter8-intro-dark.png)
 <!-- {: style="width:80%"} -->
 
 ## Use-cases
@@ -30,7 +30,7 @@ A brief overview of how Iter8 works for the various use-cases is presented below
     - **Iter8 experiment** fetches metrics and assesses versions. 
     - **Iter8 service** tracks available versions, and responds to the Iter8 SDK requests made by the frontend, and metrics requests made by the Iter8 experiment.
 
-    ![A/B testing](../tutorials/abn/images/abn.tldr.png){: style="width:80%"}
+    ![A/B testing](../tutorials/abn/images/abn.png){: style="width:80%"}
 
 
 === "Performance testing"
