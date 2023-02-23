@@ -6,7 +6,7 @@ syntax = "proto3";
 option go_package = "github.com/iter8-tools/iter8/abn/grpc";
 
 import "google/protobuf/empty.proto";
-package main;
+package abn;
 
 // for more information, see https://github.com/iter8-tools/iter8/issues/1257
 

@@ -161,7 +161,7 @@ nav:
     - Namespace and group: user-guide/topics/group.md
     - Automated experiments: user-guide/topics/autox.md
     - A/B/n testing:
-      - Iter8 Service: user-guide/topics/abn/service.md
+      - Iter8 service: user-guide/topics/abn/service.md
       - Appconf resource: user-guide/topics/abn/appconf.md
       - Iter8 SDK: user-guide/topics/abn/sdk.md
     - Glossary: user-guide/topics/glossary.md

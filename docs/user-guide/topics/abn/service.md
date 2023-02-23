@@ -2,7 +2,7 @@
 template: main.html
 ---
 
-# Iter8 service
+# Iter8 Service
 
 Iter8 service facilitates A/B/n testing of distributed Kubernetes applications. It keeps track of the [versions](../glossary.md#version) of [apps](../glossary.md#app) that are described using [`appconf` resources](appconf.md), and provides the server-side implementation of the [gRPC](https://grpc.io/)-based [Iter8 SDK](sdk.md) methods.
 
@@ -54,16 +54,16 @@ Configuration parameters related to horizontal pod autoscaler.
 
 ## Production considerations
 ### Monitoring
-Monitoring the Iter8 service is essential for understanding how it behaves in production and ensuring its reliability. You can use [standard tools for resource usage monitoring](https://kubernetes.io/docs/tasks/debug/debug-cluster/resource-usage-monitoring/) and your choice of [Kubernetes monitoring systems such as Prometheus](https://landscape.cncf.io/card-mode?category=monitoring&project=graduated,incubating,member,no&grouping=category&sort=stars) for this purpose. A few aspects to monitor include the following.
+Monitoring is essential for understanding how the Iter8 service behaves in production and ensuring its reliability. You can use [standard tools for resource usage monitoring](https://kubernetes.io/docs/tasks/debug/debug-cluster/resource-usage-monitoring/) and your choice of [Kubernetes monitoring systems such as Prometheus](https://landscape.cncf.io/card-mode?category=monitoring&project=graduated,incubating,member,no&grouping=category&sort=stars) for this purpose. The following are metrics that especially useful to monitor.
 
 1. CPU/memory requests and limits vs. actual usage to ensure that CPU and memory resources do not have contention and are not wasted.
 2. Actual replica count vs. minimum and maximum replica counts to ensure that HPA is configured properly.
 3. Persistent volume utilization to ensure that Iter8 SDK calls do not result in errors due to lack of free space.
 
 ### Storage access mode
-The default value of the `storage.accessMode` parameter is [`ReadWriteOnce`](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes). This mode corresponds to the access mode supported by the default storage classes in many managed Kubernetes services. However, `ReadWriteOnce` access mode implies that all replicas of the Iter8 service (deployment) will be scheduled on the same node. This may lead to resource contention when the rate of Iter8 SDK API calls made to the Iter8 service is high. You can solve this issue by setting the `storage.accessMode` parameter to `ReadWriteMany`, and using an appropriate `storage.className` that supports this access mode.
+The default value of the `storage.accessMode` parameter is [`ReadWriteOnce`](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes). This mode corresponds to the access mode supported by the default storage classes in many managed Kubernetes services. However, `ReadWriteOnce` access mode implies that all pods backing the Iter8 service will be scheduled on the same node. This may lead to resource contention when the rate of Iter8 SDK API is high. You can solve this issue by setting the `storage.accessMode` parameter to `ReadWriteMany`, and using an appropriate `storage.className` that supports this access mode.
 
 ### Storage volume expansion
-The persistent volume used by the Iter8 service is dynamically provisioned during its installation. If the utilization of this volume reaches its capacity, Iter8 SDK calls will result in errors due to lack of free space. You can solve this issue by using a storage class that supports [volume expansion](https://kubernetes.io/docs/concepts/storage/storage-classes/#allow-volume-expansion), monitoring the persistent volume utilization, resizing it by simply upgrading the Iter8 service with a higher storage request.
+The persistent volume used by the Iter8 service is dynamically provisioned during its installation. If the utilization of this volume reaches its capacity, Iter8 SDK calls will result in errors due to lack of free space. You can solve this issue by using a storage class that supports [volume expansion](https://kubernetes.io/docs/concepts/storage/storage-classes/#allow-volume-expansion), monitoring the persistent volume utilization, and resizing it by [upgrading the Iter8 service](../../../getting-started/install.md#install-or-upgrade-iter8-service) with a higher [storage request](#requests).
 
 

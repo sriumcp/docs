@@ -27,7 +27,7 @@ The following picture illustrates a typical design for A/B testing [an upstream 
 
 ## Create appconf
 
-Provide a description of the app being A/B tested by the Iter8 service using an [appconf](../../user-guide/topics/abn/appconf.md)
+Provide a description of the app being A/B tested using an [appconf resource](../../user-guide/topics/abn/appconf.md).
 
 ```shell
 cat << EOF > appconf.yaml
@@ -43,6 +43,7 @@ versions:
     type: svc
   - name: recommender-candidate
     type: deploy
+finalizer: true
 EOF
 ```
 
@@ -51,14 +52,14 @@ kubectl create configmap recommender --from-file=appconf.yaml
 kubectl label configmap recommender iter8.tools/role=appconf
 ```
 
-??? note "Documentation for `recommender.yaml`"
+??? note "Documentation for `appconf.yaml`"
     ```yaml
     # an app must always have a stable version; it may have multiple candidate versions
     # by convention, Version 1 is treated as the stable version; 
     # Versions 2 or more are treated as the candidate version
     versions:
       # users are split across versions in proportion to version weights
-      # weights must be positive (default 1)
+      # weights must be positive; default is 1
     - weight: 3
       # each version can have multiple resources associated with it
       resources:
@@ -76,6 +77,10 @@ kubectl label configmap recommender iter8.tools/role=appconf
         type: svc
       - name: recommender-candidate
         type: deploy
+    # Iter8 adds a finalizer to the app's resources in order  
+    # to provide readiness guarantees for the Iter8 SDK GetRoute API;
+    # if you intend to use this API, set this to true; default is false 
+    finalizer: true
     ```
 
 ## Deploy sample application
