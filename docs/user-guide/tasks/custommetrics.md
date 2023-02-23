@@ -4,7 +4,7 @@ template: main.html
 
 # custommetrics
 
-Fetch metrics from databases (like Prometheus) and other REST APIs.
+Fetch metrics from metrics stores (like Prometheus).
 
 ## Usage Example
 
@@ -13,7 +13,7 @@ In this example, the `custommetrics` task fetches metrics from the Prometheus da
 ```shell
 iter8 k launch \
 --set "tasks={custommetrics,assess}" \
---set custommetrics.templates.istio-prom="https://raw.githubusercontent.com/iter8-tools/hub/iter8-0.13.0/templates/custommetrics/istio-prom.tpl" \
+--set custommetrics.templates.istio-prom="https://raw.githubusercontent.com/iter8-tools/hub/iter8-0.14.0/templates/custommetrics/istio-prom.tpl" \
 --set custommetrics.values.labels.destination_app=httpbin \
 --set custommetrics.values.labels.namespace=default \
 --set assess.SLOs.upper.istio-prom/error-rate=0 \
@@ -39,7 +39,7 @@ graph TD
   A([Start]) --> B([Get provider template]);
   B --> C([Compute variable values]);
   C --> D([Create provider spec by combining template with values]);
-  D --> E([Query database]);
+  D --> E([Query metrics store]);
   E --> F([Process response]);
   F --> G([Update metric value in experiment]);
   G --> H{Done with all metrics?};
@@ -53,11 +53,11 @@ We describe the concepts or [provider spec](#provider-spec) and [provider templa
 
 ### Provider spec
 
-Iter8 needs the information following in order to fetch metrics from a database.
+Iter8 needs the following information in order to fetch metrics from a metrics store.
 
-1. The HTTP URL where the database can be queried.
-2. The HTTP headers and method (GET/POST) to be used while querying the database.
-3. For each metric to be fetched from the database:
+1. The HTTP URL where the metrics store can be queried.
+2. The HTTP headers and method (GET/POST) to be used while querying the metrics store.
+3. For each metric to be fetched from the metrics store:
     * The specific HTTP query to be used, in particular, the HTTP query parameters and body (if any).
     * The logic for parsing the query response and retrieving the metric value.
 
@@ -66,7 +66,7 @@ The above information is encapsulated by `ProviderSpec`, a data structure which 
 ???+ tip "Golang type definitions for ProviderSpec and Metric"
     ```go linenums="1"
     type ProviderSpec struct {
-      // URL is the database endpoint
+      // URL is the endpoint for the metrics store
       URL string `json:"url" yaml:"url"`
       // Method is the HTTP method that needs to be used
       Method string `json:"method" yaml:"method"`
@@ -102,16 +102,16 @@ The above information is encapsulated by `ProviderSpec`, a data structure which 
     }
     ```
 
-The `ProviderSpec` and `Metric` data structures together supply Iter8 with all the information needed to query databases, process the response to extract metric values, store the metric values in experiments, and display them in experiment reports with auxiliary information (such as description and units). Metric types are defined [here](../topics/metrics.md#metric-types).
+The `ProviderSpec` and `Metric` data structures together supply Iter8 with all the information needed to query metrics stores, process the response to extract metric values, store the metric values in experiments, and display them in experiment reports with auxiliary information (such as description and units). Metric types are defined [here](../topics/metrics.md#metric-types).
 
 ### Provider template
 
 Rather than supplying [provider specs](#provider-spec) directly, Iter8 enables users to supply one or more [Golang templates](https://pkg.go.dev/text/template) for provider specs. Iter8 combines the provider templates with [values](#computing-variable-values), in order to generate [provider specs](#provider-spec) in YAML format, and uses them to query for the metrics.
 
 Example providers specs:
-  * [istio-prom](https://raw.githubusercontent.com/iter8-tools/hub/iter8-0.13.0/templates/custommetrics/istio-prom.tpl) for [Istio's Prometheus plugin](https://istio.io/latest/docs/ops/integrations/prometheus/)
+  * [istio-prom](https://raw.githubusercontent.com/iter8-tools/hub/iter8-0.14.0/templates/custommetrics/istio-prom.tpl) for [Istio's Prometheus plugin](https://istio.io/latest/docs/ops/integrations/prometheus/)
 
-In order to create [provider templates](#provider-template) and use them in experiments, it is necessary to have a clear understanding of how variable values are computed, and how the response from the database is processed by Iter8. We describe these steps next.
+In order to create [provider templates](#provider-template) and use them in experiments, it is necessary to have a clear understanding of how variable values are computed, and how the response from the metrics store is processed by Iter8. We describe these steps next.
 
 ### Computing variable values
 
@@ -128,7 +128,7 @@ Variable values are configured explicitly by the user during experiment launch. 
     ```shell
     iter8 k launch \
     --set "tasks={custommetrics,assess}" \
-    --set custommetrics.templates.istio-prom="https://raw.githubusercontent.com/iter8-tools/hub/iter8-0.13.0/templates/custommetrics/istio-prom.tpl" \
+    --set custommetrics.templates.istio-prom="https://raw.githubusercontent.com/iter8-tools/hub/iter8-0.14.0/templates/custommetrics/istio-prom.tpl" \
     --set custommetrics.values.labels.namespace=default \
     --set custommetrics.values.labels.destination_app=httpbin \
     --set custommetrics.values.labels.reporter=destination \

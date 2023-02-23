@@ -93,7 +93,7 @@ func buy(w http.ResponseWriter, req *http.Request) {
 	// Get user (session) identifier, for example by inspection of header X-User
 	user := req.Header["X-User"][0]
 
-	// export metric to metrics database; this is best effort; ignore any failure
+	// export metric to Iter8 storage; this is best effort; ignore any failure
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	_, _ = (*client).WriteMetric(

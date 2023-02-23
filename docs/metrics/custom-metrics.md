@@ -4,7 +4,7 @@ template: main.html
 
 # Custom Metrics
 
-Custom Iter8 metrics enable you to use data from any database for evaluating app/ML model versions within Iter8 experiments. This document describes how you can define custom Iter8 metrics and (optionally) supply authentication information that may be required by the metrics provider.
+Iter8's custom metrics feature enables you to use metrics from any metrics store for evaluating app/ML model versions within Iter8 experiments. This document describes how you can define custom Iter8 metrics and (optionally) supply authentication information that may be required by the metrics provider.
 
 Metric providers differ in the following aspects.
 

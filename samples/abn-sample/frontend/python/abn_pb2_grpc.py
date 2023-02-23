@@ -48,7 +48,7 @@ class ABNServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def WriteMetric(self, request, context):
-        """Write a metric value to metrics database.
+        """Write a metric value to Iter8 storage.
         The metric value is explicitly associated with a list of transactions that contributed to its computation.
         The user is expected to identify these transactions.
         """

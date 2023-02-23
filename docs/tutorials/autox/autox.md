@@ -52,7 +52,7 @@ kubectl label deployment httpbin app.kubernetes.io/version=1.0.0
 Next, we will configure and install the AutoX controller.
 
 ```bash
-helm install autox autox --repo https://iter8-tools.github.io/hub/ --version 0.1.6 \
+helm upgrade iter8-service iter8 --install --repo https://iter8-tools.github.io/hub --version 0.14.x --set role=svc \
 --set 'groups.httpbin.trigger.name=httpbin' \
 --set 'groups.httpbin.trigger.namespace=default' \
 --set 'groups.httpbin.trigger.group=apps' \
@@ -66,7 +66,7 @@ helm install autox autox --repo https://iter8-tools.github.io/hub/ --version 0.1
 --set 'groups.httpbin.specs.iter8.values.http.url=http://httpbin.default/get' \
 --set 'groups.httpbin.specs.iter8.values.assess.SLOs.upper.http/error-count=0' \
 --set 'groups.httpbin.specs.iter8.values.assess.SLOs.upper.http/latency-mean=50' \
---set 'groups.httpbin.specs.iter8.version=0.13.0' \
+--set 'groups.httpbin.specs.iter8.version=0.14.x' \
 --set 'groups.httpbin.specs.iter8.values.runner=job'
 ```
 

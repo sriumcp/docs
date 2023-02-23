@@ -4,7 +4,7 @@ template: main.html
 
 # SLO validation using custom metrics (single version)
 
-Validate [SLOs](../../getting-started/concepts.md#service-level-objectives) for an app by fetching the app's metrics from a database (like Prometheus). This is a [multi-loop](../../getting-started/concepts.md#iter8-experiment) [Kubernetes experiment](../../getting-started/concepts.md#kubernetes-experiments).
+Validate [SLOs](../../getting-started/concepts.md#service-level-objectives) for an app by fetching the app's metrics from a metrics store (like Prometheus). This is a [multi-loop](../../getting-started/concepts.md#iter8-experiment) [Kubernetes experiment](../../getting-started/concepts.md#kubernetes-experiments).
 
 <p align='center'>
   <img alt-text="custom-metrics-one-version" src="../images/one-version.png" />
@@ -37,7 +37,7 @@ Validate [SLOs](../../getting-started/concepts.md#service-level-objectives) for 
 ```shell
 iter8 k launch \
 --set "tasks={custommetrics,assess}" \
---set custommetrics.templates.istio-prom="https://raw.githubusercontent.com/iter8-tools/hub/iter8-0.13.0/templates/custommetrics/istio-prom.tpl" \
+--set custommetrics.templates.istio-prom="https://raw.githubusercontent.com/iter8-tools/hub/iter8-0.14.0/templates/custommetrics/istio-prom.tpl" \
 --set custommetrics.values.labels.namespace=default \
 --set custommetrics.values.labels.destination_app=httpbin \
 --set assess.SLOs.upper.istio-prom/error-rate=0 \
@@ -49,7 +49,7 @@ iter8 k launch \
 ??? note "About this experiment"
     This experiment consists of two [tasks](../../getting-started/concepts.md#iter8-experiment), namely, [custommetrics](../../user-guide/tasks/custommetrics.md), and [assess](../../user-guide/tasks/assess.md). 
     
-    The `custommetrics` task in this experiment [works](../../user-guide/tasks/custommetrics.md#how-it-works) by downloading a [provider template](../../user-guide/tasks/custommetrics.md#provider-template) named `istio-prom` from a URL, [substituting the template variables with values](../../user-guide/tasks/custommetrics.md#computing-variable-values), using the resulting [provider spec](../../user-guide/tasks/custommetrics.md#provider-spec) to query Prometheus for metrics, and [processing the response from Prometheus](../../user-guide/tasks/custommetrics.md#processing-response) to extract the metric values. Metrics defined by this template include `error-rate` and `latency-mean`; the [Prometheus labels](https://istio.io/latest/docs/reference/config/metrics/#labels) used by this template are stored in `labels`; all the metrics and variables associated with this template are [documented as part of the template](https://raw.githubusercontent.com/iter8-tools/hub/iter8-0.13.0/templates/custommetrics/istio-prom.tpl). 
+    The `custommetrics` task in this experiment [works](../../user-guide/tasks/custommetrics.md#how-it-works) by downloading a [provider template](../../user-guide/tasks/custommetrics.md#provider-template) named `istio-prom` from a URL, [substituting the template variables with values](../../user-guide/tasks/custommetrics.md#computing-variable-values), using the resulting [provider spec](../../user-guide/tasks/custommetrics.md#provider-spec) to query Prometheus for metrics, and [processing the response from Prometheus](../../user-guide/tasks/custommetrics.md#processing-response) to extract the metric values. Metrics defined by this template include `error-rate` and `latency-mean`; the [Prometheus labels](https://istio.io/latest/docs/reference/config/metrics/#labels) used by this template are stored in `labels`; all the metrics and variables associated with this template are [documented as part of the template](https://raw.githubusercontent.com/iter8-tools/hub/iter8-0.14.0/templates/custommetrics/istio-prom.tpl). 
     
     The [assess](../../user-guide/tasks/assess.md) task verifies if the app satisfies the specified SLOs: i) there are no errors, and ii) the mean latency of the app does not exceed 100 msec. 
 
@@ -69,6 +69,6 @@ View experiment report and logs, and cleanup as described in [your first experim
 
 ??? note "Some variations and extensions of this experiment"
     1. Perform [SLO validation for multiple versions of an app using custom metrics](two-or-more-versions.md).
-    2. Define and use your own provider templates. This enables you to use any app-specific metrics from any database as part of Iter8 experiments. Read the [documentation for the `custommetrics` task](../../user-guide/tasks/custommetrics.md) to learn more.
+    2. Define and use your own provider templates. This enables you to use any app-specific metrics from any metrics store as part of Iter8 experiments. Read the [documentation for the `custommetrics` task](../../user-guide/tasks/custommetrics.md) to learn more.
     3. Alter the `cronjobSchedule` expression so that experiment loops are repeated at a frequency of your choice. Use use [https://crontab.guru](https://crontab.guru) to learn more about `cronjobSchedule` expressions.
 

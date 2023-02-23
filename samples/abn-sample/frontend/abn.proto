@@ -15,7 +15,7 @@ service ABN {
   // Should be called for each request (transaction).
   rpc Lookup(Application) returns(Session) {}
 
-  // Write a metric value to metrics database.
+  // Write a metric value to Iter8 storage.
   // The metric value is explicitly associated with a list of transactions that contributed to its computation.
   // The user is expected to identify these transactions.
   rpc WriteMetric(MetricValue) returns (google.protobuf.Empty) {}

@@ -2,95 +2,80 @@
 template: main.html
 ---
 
-# A/B testing an upstream service (backend)
+# A/B testing
 
-This tutorial describes the process of [A/B testing](../../user-guide/topics/ab_testing.md) [an upstream service (backend)](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/intro/terminology) in a distributed application. The process of A/B testing a backend involves the following steps.
+The process of A/B testing an app/ML model involves the following steps.
 
-1. Deploy a candidate version of the backend.
-2. Split traffic from the frontend, to the stable and candidate versions of the backend, while ensuring [user stickiness](sticky).
-3. Collectbusiness metrics for backend versions.
-4. Promote the winning version of the backend as the latest stable version.
+1. Deploying a candidate version of the app/ML model.
+2. Splitting user traffic between the stable and candidate version, while ensuring [user stickiness](sticky).
+3. Collecting business metrics and assessing versions based on them.
+4. Promoting the winning version as the latest stable version.
 
-Iter8 automates steps 2 and 3 while decoupling the frontend and backend: the frontend code and configuration is unaffected even as new versions of the backend are deployed, A/B tested, promoted as the latest stable version, and/or deleted. The following picture illustrates A/B testing of a backend in Iter8.
+Iter8 automatically tracks deployed versions during step 1, automates steps 2 and 3, and assists step 4 through notifications. 
 
-![AB testing](images/abn.png){: style="width:80%"}
+The following picture illustrates a typical design for A/B testing [an upstream service (backend app/ML model)](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/intro/terminology) in a distributed application using Iter8. We will use this design in this tutorial.
 
-???+ note "Iter8 terminology and conventions"
-    1. The terms `backend` and `upstream service` are synonymous.
-    2. The terms `frontend` and `downstream service` are synonymous.
-    3. The term `app` refers to the subject of an experiment (`backend` in this tutorial). 
-    4. App `versions` are numbered. Version 1 refers to the stable version. Versions 2, 3, ... refer to candidates.
+![A/B testing a backend](images/abn.backend.png){ width="65%" }
+ 
+***
+
+???+ warning "Before you begin"
+    1. [Install or upgrade the Iter8 service](../../getting-started/install.md#install-or-upgrade-iter8-service) so that it works with apps in the `default` namespace.
+    2. Try [your first experiment](../../getting-started/your-first-experiment.md). Understand the main [concepts](../../getting-started/concepts.md) behind Iter8 experiments.
 
 ***
- 
-## Deploy Iter8 service
 
-Configure and deploy the [Iter8 service](iter8service). Iter8 service configuration provides information about [persistent storage used by Iter8](storage), and the apps that are A/B tested.
+## Create appconf
 
-???+ warning "Before you run the following commands"
-    Set the `$STORAGE_CLASS_NAME` environment variable to the name of the StorageClass resource used to provision the [persistent volume for Iter8 service](storage). For example, local testing and development, if you are using a `Kind` cluster, you could `export STORAGE_CLASS_NAME=standard`.
+Provide a description of the app being A/B tested by the Iter8 service using an [appconf](../../user-guide/topics/abn/appconf.md)
 
 ```shell
-cat << EOF > values.yaml
-storageClass:
-  name: $STORAGE_CLASS_NAME
-apps:
-- name: recommender
-  namespace: test
-  versions:
-  - weight: 3
-    resources:
-    - name: recommender-stable
-      type: svc
-    - name: recommender-stable
-      type: deploy
-  - resources:
-    - name: recommender-candidate
-      type: svc
-    - name: recommender-candidate
-      type: deploy
+cat << EOF > appconf.yaml
+versions:
+- weight: 3
+  resources:
+  - name: recommender-stable
+    type: svc
+  - name: recommender-stable
+    type: deploy
+- resources:
+  - name: recommender-candidate
+    type: svc
+  - name: recommender-candidate
+    type: deploy
 EOF
 ```
 
 ```shell
-helm install --repo https://iter8-tools.github.io/hub iter8-service iter8-service \
---version 0.14.x -f values.yaml --create-namespace -n iter8-system
+kubectl create configmap recommender --from-file=appconf.yaml
+kubectl label configmap recommender iter8.tools/role=appconf
 ```
 
-??? note "Documentation for `values.yaml`"
+??? note "Documentation for `recommender.yaml`"
     ```yaml
-    # name of the Kubernetes StorageClass resource used by the Iter8 service
-    storageClassName: standard
-    # this section specifies Iter8 configuration for A/B/n testing
-    apps:
-      # name of the app that is A/B testing using Iter8
-      # choose a unique name
-    - name: recommender
-      # namespace of the app
-      namespace: test
-      # an app must always have a stable version; it may have multiple candidate versions
-      # the current stable version is served by version 1; 
-      # candidate versions are served by the other versions
-      versions:
-        # users are split across versions in proportion to version weights
-        # weights must be positive (default 1)
-      - weight: 3
-        # each version can have multiple resources associated with it
-        resources:
-          # name of the resource
-        - name: recommender-stable
-          # type of the resource
-          # svc is shorthand for k8s service
-          type: svc
-        - name: recommender-stable
-          # deploy is shorthand for k8s deployment
-          type: deploy
-        # second version with the default weight of 1
-      - resources:
-        - name: recommender-candidate
-          type: svc
-        - name: recommender-candidate
-          type: deploy
+    # an app must always have a stable version; it may have multiple candidate versions
+    # by convention, Version 1 is treated as the stable version; 
+    # Versions 2 or more are treated as the candidate version
+    versions:
+      # users are split across versions in proportion to version weights
+      # weights must be positive (default 1)
+    - weight: 3
+      # each version can have multiple resources associated with it
+      resources:
+        # name of the resource
+      - name: recommender-stable
+        # type of the resource
+        # svc is shorthand for k8s service
+        type: svc
+      - name: recommender-stable
+        # deploy is shorthand for k8s deployment
+        type: deploy
+      # second version with the default weight of 1
+    - resources:
+      - name: recommender-candidate
+        type: svc
+      - name: recommender-candidate
+        type: deploy
     ```
 
 ## Deploy sample application
@@ -99,13 +84,13 @@ Deploy the sample application.
     Deploy the frontend in the language of your choice.
     === "node"
         ```shell
-        kubectl create deployment frontend --image=iter8/abn-sample-frontend-node:0.13
+        kubectl create deployment frontend --image=iter8/abn-sample-frontend-node:0.14
         kubectl expose deployment frontend --name=frontend --port=8090
         ```
 
     === "Go"
         ```shell
-        kubectl create deployment frontend --image=iter8/abn-sample-frontend-go:0.13
+        kubectl create deployment frontend --image=iter8/abn-sample-frontend-go:0.14
         kubectl expose deployment frontend --name=frontend --port=8090
         ```
     
@@ -113,7 +98,7 @@ Deploy the sample application.
      Deploy the stable version of the backend as follows.
 
     ```shell
-    kubectl create deployment recommender-stable --image=iter8/abn-sample-backend:0.13-v1
+    kubectl create deployment recommender-stable --image=iter8/abn-sample-backend:0.14-v1
     kubectl expose deployment recommender-stable --port=8091
     ```
 
@@ -136,7 +121,7 @@ curl -s https://raw.githubusercontent.com/iter8-tools/docs/main/samples/abn-samp
 Deploy the candidate version of the backend. The candidate version is associated with Version 2.
 
 ```shell
-kubectl create deployment recommender-candidate --image=iter8/abn-sample-backend:0.13-v2
+kubectl create deployment recommender-candidate --image=iter8/abn-sample-backend:0.14-v2
 kubectl expose deployment recommender-candidate --port=8091
 ```
 
@@ -259,7 +244,7 @@ Promote the candidate version as the latest stable version.
 
 ```shell
 kubectl set image deployment/recommender-stable \
-abn-sample-backend=iter8/abn-sample-backend:0.13-v2
+abn-sample-backend=iter8/abn-sample-backend:0.14-v2
 ```
 
 At this point, Versions 1 and 2 both have the same image. You can delete all the resources associated with Version 2, leaving Version 1 as the one and only deployed version of the app.

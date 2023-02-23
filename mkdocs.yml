@@ -70,10 +70,8 @@ markdown_extensions:
 - attr_list
 - def_list
 - footnotes
-- meta
 - md_in_html
-- toc:
-    permalink: true
+- meta
 - pymdownx.arithmatex:
     generic: true
 - pymdownx.betterem:
@@ -108,6 +106,9 @@ markdown_extensions:
     alternate_style: true 
 - pymdownx.tasklist:
     custom_checkbox: true
+- tables
+- toc:
+    permalink: true
 
 # Page tree
 nav:
@@ -156,7 +157,11 @@ nav:
     - Metrics: user-guide/topics/metrics.md
     - Namespace and group: user-guide/topics/group.md
     - Automated experiments: user-guide/topics/autox.md
-    - A/B/n testing: user-guide/topics/ab_testing.md
+    - A/B/n testing:
+      - Iter8 Service: user-guide/topics/abn/service.md
+      - Appconf resource: user-guide/topics/abn/appconf.md
+      - Iter8 SDK: user-guide/topics/abn/sdk.md
+    - Glossary: user-guide/topics/glossary.md
   - Commands:
     - iter8: user-guide/commands/iter8.md
     - iter8 version: user-guide/commands/iter8_version.md

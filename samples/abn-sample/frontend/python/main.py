@@ -72,7 +72,7 @@ def buy():
     # Get user (session) identifier, for example, by inspection of header X-User
     user = request.headers['X-User']
 
-	# export metric to metrics database
+	# export metric to Iter8 storage
 	# this is best effort; we ignore any failure
 
     # establish connection to ABn service
@@ -80,7 +80,7 @@ def buy():
     with grpc.insecure_channel(abnSvc) as channel:
         stub = abn_pb2_grpc.ABNStub(channel)
 
-        # export metric to metrics database
+        # export metric to Iter8 storage
         # this is best effort; we ignore any failure
         try:
             stub.WriteMetric( \

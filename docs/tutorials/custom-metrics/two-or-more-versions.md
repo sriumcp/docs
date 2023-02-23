@@ -4,7 +4,7 @@ template: main.html
 
 # SLO validation using custom metrics (multiple versions)
 
-Validate [SLOs](../../getting-started/concepts.md#service-level-objectives) for multiple versions of an app by fetching metrics for each app version from a database (like Prometheus). This is a [multi-loop](../../getting-started/concepts.md#iter8-experiment) [Kubernetes experiment](../../getting-started/concepts.md#kubernetes-experiments).
+Validate [SLOs](../../getting-started/concepts.md#service-level-objectives) for multiple versions of an app by fetching metrics for each app version from a metrics store (like Prometheus). This is a [multi-loop](../../getting-started/concepts.md#iter8-experiment) [Kubernetes experiment](../../getting-started/concepts.md#kubernetes-experiments).
 
 <p align='center'>
   <img alt-text="custom-metrics-two-or-more-versions" src="../images/two-or-more-versions.png" />
@@ -27,7 +27,7 @@ Validate [SLOs](../../getting-started/concepts.md#service-level-objectives) for 
 ```shell
 iter8 k launch \
 --set "tasks={custommetrics,assess}" \
---set custommetrics.templates.istio-prom="https://raw.githubusercontent.com/iter8-tools/hub/iter8-0.13.0/templates/custommetrics/istio-prom.tpl" \
+--set custommetrics.templates.istio-prom="https://raw.githubusercontent.com/iter8-tools/hub/iter8-0.14.0/templates/custommetrics/istio-prom.tpl" \
 --set custommetrics.values.labels.namespace=default \
 --set custommetrics.values.labels.destination_app=httpbin \
 --set custommetrics.values.labels.reporter=destination \
@@ -49,7 +49,7 @@ Assert experiment outcomes, view experiment report, view experiment logs, and cl
 ***
 
 ??? note "Some variations and extensions of this experiment"
-    1. Define and use your own provider templates. This enables you to use any app-specific metrics from any database as part of Iter8 experiments. Read the [documentation for the `custommetrics` task](../../user-guide/tasks/custommetrics.md) to learn more.
+    1. Define and use your own provider templates. This enables you to use any app-specific metrics from any metrics store as part of Iter8 experiments. Read the [documentation for the `custommetrics` task](../../user-guide/tasks/custommetrics.md) to learn more.
     2. Alter the `cronjobSchedule` expression so that experiment loops are repeated at a frequency of your choice. Use use [https://crontab.guru](https://crontab.guru) to learn more about `cronjobSchedule` expressions.
 
     

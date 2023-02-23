@@ -70,7 +70,7 @@ app.get('/buy', (req, res) => {
 	// Get user (session) identifier, for example by inspection of header X-User
     const user = req.header('X-User')
 
-	// export metric to metrics database
+	// export metric to Iter8 storage
 	// this is best effort; we ignore any failure
 
     // export metric

@@ -25,7 +25,7 @@ helm install autox autox --repo https://iter8-tools.github.io/hub/ --version 0.1
 --set 'groups.myApp.specs.iter8-http.values.ready.service=myApp' \
 --set 'groups.myApp.specs.iter8-http.values.ready.timeout=60s' \
 --set 'groups.myApp.specs.iter8-http.values.http.url=http://myApp.default/get' --set 'groups.myApp.specs.iter8-http.values.assess.SLOs.upper.http/error-count=0' --set 'groups.myApp.specs.iter8-http.values.assess.SLOs.upper.http/latency-mean=50' \
---set 'groups.myApp.specs.iter8-http.version=0.13.0' \
+--set 'groups.myApp.specs.iter8-http.version=0.14.0' \
 --set 'groups.myApp.specs.iter8-http.values.runner=job'
 ```
 
@@ -50,7 +50,7 @@ In this next example, we have augmented the previous example with an additional 
   --set 'groups.myApp.specs.iter8-http.values.http.url=http://myApp.default/get' \
   --set 'groups.myApp.specs.iter8-http.values.assess.SLOs.upper.http/error-count=0' \
   --set 'groups.myApp.specs.iter8-http.values.assess.SLOs.upper.http/latency-mean=50' \
-  --set 'groups.myApp.specs.iter8-http.version=0.13.0' \
+  --set 'groups.myApp.specs.iter8-http.version=0.14.0' \
   --set 'groups.myApp.specs.iter8-http.values.runner=job' \
   --set 'groups.myApp.specs.iter8-grpc.values.tasks={ready,grpc,assess}' \
   --set 'groups.myApp.specs.iter8-grpc.values.ready.deploy=myApp' \

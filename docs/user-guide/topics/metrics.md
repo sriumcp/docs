@@ -24,7 +24,7 @@ Iter8 has built-in metrics providers, namely, [`http`](../tasks/http.md#metrics)
 
 ## Custom metrics provider
 
-You can use metrics from any (RESTful) database in Iter8 experiments. Metrics fetched by Iter8 from databases are also referred to as custom metrics. See [here](../tasks/custommetrics.md) to learn more about custom metrics.
+You can use metrics from any metrics store in Iter8 experiments. Metrics fetched by Iter8 from metrics stores are also referred to as custom metrics. See [here](../tasks/custommetrics.md) to learn more about custom metrics.
 
 ## Metric types
 
