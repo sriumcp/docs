@@ -24,30 +24,28 @@ template: main.html
 
 ***
 
-## Deploy application
+## Create application
 
-Deploy an application.
+=== "deployment and service"
 
-```shell
-kubectl create deploy httpbin --image=kennethreitz/httpbin --port=80
-kubectl expose deploy httpbin --port=80
-```
+    Create the deployment and service.
 
-Label the app resources so that Iter8 can detect them.
-```shell
-kubectl label deploy httpbin iter8.tools/detect=true
-kubectl label svc httpbin iter8.tools/detect=true
-```
+    ```shell
+    kubectl create deploy httpbin --image=kennethreitz/httpbin --port=80
+    kubectl expose deploy httpbin --port=80
+    ```
 
-***
-
-## Create Iter8 specs
-
-Create the Iter8 specs needed to performance test the app.
+    Label the deployment and service so that Iter8 can detect them.
+    ```shell
+    kubectl label deploy httpbin iter8.tools/detect=true
+    kubectl label svc httpbin iter8.tools/detect=true
+    ```
 
 === "subject"
 
-    A `subject` in Iter8 is an [immutable configmap](https://kubernetes.io/docs/concepts/configuration/configmap/) that specifies an app and its versions (variants). Create it as follows.
+    A `subject` in Iter8 is an [immutable configmap](https://kubernetes.io/docs/concepts/configuration/configmap/) that lists an app's resources.
+    
+    Create the `httpbin` subject as follows.
 
     ```shell
     cat << EOF | kubectl apply -f -
@@ -60,42 +58,51 @@ Create the Iter8 specs needed to performance test the app.
         # standard Iter8 labels applied on subjects
         app.kubernetes.io/managed-by: iter8
         app.kubernetes.io/component: subject
+        iter8.tools/version: v0.14
     data:
       spec: |
-        # each variant of httpbin has a service and deployment resource
-        gvrs: [svc, deploy]
         # httpbin has a single variant
         variants:
         # the variant has a service named httpbin and a deployment named httpbin
-        - [httpbin, httpbin]
+        - gvr: svc
+          name: httpbin
+        - gvr: deploy
+          name: httpbin
     immutable: true
     EOF
     ```
 
-=== "experimentspec"
+## Create experiment
 
-    An `experimentspec` in Iter8 is a special type of [immutable secret](https://kubernetes.io/docs/concepts/configuration/secret/) that specifies an Iter8 experiment for a subject. Iter8 can launch new runs of the experiment whenever it detects changes to the app defined by the subject. Create the `experimentspec` as follows.
+Create the Iter8 specs needed to performance test the app.
+
+=== "subject"
+
+
+=== "experiment"
+
+    An `experiment` in Iter8 is a special type of [immutable secret](https://kubernetes.io/docs/concepts/configuration/secret/) that specifies an Iter8 experiment for a subject. Iter8 can launch new runs of an experiment whenever it detects changes to the app defined by the subject. Create the `experiment` as follows.
 
     ```shell
     cat << EOF | kubectl apply -f -
     apiVersion: v1
     kind: Secret
     metadata:
-      // name of the experimentspec
+      // name of the experiment
       name: performance-test
       labels:
-        # standard Iter8 labels applied on experimentspecs
+        # standard Iter8 labels applied on experiment specs
         app.kubernetes.io/managed-by: iter8   
-        app.kubernetes.io/component: iter8/experimentspec
+        app.kubernetes.io/component: iter8/experiment
+        iter8.tools/version: v0.14
     stringData:
       spec: |
-        # this experimentspec is for httpbin
+        # this experiment is for httpbin
         subject: httpbin
-        trigger:
-          # trigger a new run of the experiment whenever there is a change to
-          # the signature of variant 1
-          # older runs will be garbage collected automatically
-          owner: variant/1/sig
+        # trigger a new run of the experiment whenever there is a change to
+        # the signature of variant 1
+        # older runs will be garbage collected automatically
+        owner: variant/1/sig
         tasks:
         # check if Kubernetes resources involved in the experiment are ready
         - name: ready

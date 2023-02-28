@@ -8,7 +8,7 @@ Iter8 provides an SDK for application developers to facilitate A/B/n testing of 
 
 ## GetRoute
 
-`GetRoute` takes as input [a subject ID](../appspec.md#app-id) and a user ID, and returns a [variant number](../../../glossary.md#version-number). Its protobuf definition is as follows.
+`GetRoute` takes as input [a subject ID](../subject.md#app-id) and a user ID, and returns a [variant number](../../../glossary.md#version-number). Its protobuf definition is as follows.
 
 ```proto
 // GetRoute returns a variant number for the given RequestMeta (subject/user ID combination)

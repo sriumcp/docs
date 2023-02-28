@@ -21,7 +21,7 @@ Iter8 introduces the notion of an *experiment* to facilitate various release opt
 
 Iter8 consists of three components, namely, Iter8 service, Iter8 SDK (optional), and the Iter8 CLI.
 
-1. **Iter8 service:** runs inside the cluster; detects changes to apps, automates Iter8 experiments, manages service mesh resources, and implements the server-side of Iter8 SDK. Users control Iter8 and app behavior through four types of declarative specifications, namely, `subject`, `experimentspec`, `weights`, and `routingpolicy`.
+1. **Iter8 service:** runs inside the cluster; detects changes to apps, automates Iter8 experiments, manages service mesh resources, and implements the server-side of Iter8 SDK. Users control Iter8 and app behavior through three types of declarative specifications, namely, `subject`, `experiment`, and `weights`.
 
 2. **Iter8 SDK:** gRPC-based APIs embedded within end-user application logic; simplifies A/B/n testing; enables applications to receive or report routing information, and report business metrics.
 

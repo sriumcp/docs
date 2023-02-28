@@ -19,7 +19,7 @@ This tutorial builds on the [Istio traffic mirroring tutorial](https://istio.io/
 
 ## Deploy app
 
-Start by deploying variant 1 of `httpbin` with access logging enabled.
+Start by deploying variant 1 of `httpbin` with access logging enabled. Note that the deployment and service resources are *not* detected by Iter8.
 
 === "httpbin-v1 deployment"
 
@@ -29,8 +29,6 @@ Start by deploying variant 1 of `httpbin` with access logging enabled.
     kind: Deployment
     metadata:
       name: httpbin-v1
-      labels:
-        iter8.tools/detect: true
     spec:
       replicas: 1
       selector:
@@ -61,8 +59,6 @@ Start by deploying variant 1 of `httpbin` with access logging enabled.
     kind: Service
     metadata:
       name: httpbin-v1
-      labels:
-        iter8.tools/detect: true
     spec:
       ports:
       - port: 80
@@ -97,7 +93,7 @@ Start by deploying variant 1 of `httpbin` with access logging enabled.
 
 === "subject"
 
-    Create the `subject`. Note that even though variant 2 of `httpbin` is yet to be created, the subject already specifies both the variants.
+    Create the `subject`. Note that even though variant 2 of `httpbin` is yet to be created, the subject already specifies this variant. It also omits variant 1 since this does not affect the routing configuration.
 
     ```shell
     cat << EOF | kubectl create -f - 
@@ -108,62 +104,44 @@ Start by deploying variant 1 of `httpbin` with access logging enabled.
       labels:
         app.kubernetes.io/managed-by: iter8    
         app.kubernetes.io/component: httpbin
+        iter8.tools/version: v0.14
     data:
       spec: |
-        gvrs: [svc, deploy]
         variants: 
-        - [httpbin-v1, httpbin-v1]
-        - [httpbin-v2, httpbin-v2]
-    immutable: true
-    EOF
-    ```
-
-=== "routing policy"
-
-    A `routingpolicy` in Iter8 is a special type of [immutable configmap](https://kubernetes.io/docs/concepts/configuration/configmap/). It references a Helm chart with Kubernetes resource templates that enable routing. Iter8 can dynamically configure routing resources using this policy, based on the state of the app.
-
-    ```shell
-    cat << EOF | kubectl apply -f -
-    apiVersion: v1
-    kind: ConfigMap
-    metadata:
-      // name of the routingpolicy
-      name: httpbin-route
-      labels:
-        # standard Iter8 labels applied on routingpolicies
-        app.kubernetes.io/managed-by: iter8   
-        app.kubernetes.io/component: iter8/routingpolicy
-    data:
-      spec: |
-        trigger:
-          # routing resources are owned by httpbin
-          owner: httpbin
-          # routing resources are updated based on the state of variant 2
-          update: variant/2
-        repo: https://iter8-tools.github.io/iter8
-        chart: mirror
-        version: 0.14.x 
-        values:
-          parentRefs:
-          - kind: Service
-            name: httpbin
-            port: 8000
-          rules:
-          # the filters section will be dynamically included in the routing resource
-          # depending upon whether variant 2 exists or not
-          # rest of the values will be included as they are
-          - filters:
-            - type: RequestMirror
-              requestMirror:
-                backendRef:
-                  name: httpbin-v2
+        - # this variant has no bearing on the routing configuration, so leave it blank
+        - - gvr: svc
+            name: httpbin-v2
+          - gvr: deploy
+            name: httpbin-v2
+        routing:
+          # routing resources are updated based on the existence or absence of variant 2
+          trigger: variant/2
+          # routing resources are provided by a helm chart
+          helm:
+            repo: https://iter8-tools.github.io/iter8
+            chart: mirror
+            version: 0.14.x 
+            values:
+              parentRefs:
+              - kind: Service
+                name: httpbin
+                port: 8000
+              rules:
+              # the filters section will be dynamically included in the routing resource
+              # depending upon whether variant 2 exists or not
+              # rest of the values will be included as they are
+              - filters:
+                - type: RequestMirror
+                  requestMirror:
+                    backendRef:
+                      name: httpbin-v2
+                      port: 80
+                backendRefs:
+                - name: httpbin-v1
                   port: 80
-            backendRefs:
-            - name: httpbin-v1
-              port: 80
     immutable: true
     EOF
-    ```    
+    ```   
 
 ## Inspect routing resource
 
@@ -355,46 +333,15 @@ kubectl exec "${SLEEP_POD}" -c sleep -- curl -sS http://httpbin:8000/headers
     127.0.0.1 - - [07/Mar/2018:19:26:44 +0000] "GET /headers HTTP/1.1" 200 361 "-" "curl/7.35.0"
     ```
 
-## Delete variant 2 and inspect again
-
-```shell
-kubectl delete deploy/httpbin-v2 svc/httpbin-v2
-```
-
-Iter8 automatically detects the absence of the second variant and reconfigures the routing resource.
-
-```shell
-kubectl get httproute/httpbin -o yaml
-```
-
-??? note "Output will be similar to this"
-
-    ```yaml
-    apiVersion: gateway.networking.k8s.io/v1beta1
-    kind: HTTPRoute
-    metadata:
-      name: httpbin
-    spec:
-      parentRefs:
-      - kind: Service
-        name: httpbin
-        port: 8000
-      rules:
-      - backendRefs:
-        - name: httpbin-v1
-          port: 80
-    ```
-
-
 
 ## Cleanup
 
-Remove `sleep`, `v2`, `v1`, and Iter8 specs.
+Remove `sleep`, `v1`, `v2`, and Iter8 specs.
 
 ```shell
 kubectl delete deploy sleep
-kubectl delete deploy/httpbin-v2 svc/httpbin-v2
 kubectl delete deploy/httpbin-v1 svc/httpbin-v1 
+kubectl delete deploy/httpbin-v2 svc/httpbin-v2
 kubectl delete svc/httpbin cm/httpbin cm/httpbin-route
 ```
 

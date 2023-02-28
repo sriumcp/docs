@@ -142,10 +142,9 @@ nav:
 #   - Linkerd: integrations/linkerd.md
 - User guide:
   - Topics:
-    - Appspec: user-guide/topics/appspec.md
-    - Experimentspec: user-guide/topics/experimentspec.md
-    - Weightspec: user-guide/topics/experimentspec.md
-    - Meshspec: user-guide/topics/meshspec.md
+    - Subject: user-guide/topics/subject.md
+    - Experiment: user-guide/topics/experiment.md
+    - Weights: user-guide/topics/weights.md
     # - Experiment parameters: user-guide/topics/parameters.md
     # - Metrics: user-guide/topics/metrics.md
     - A/B/n testing:

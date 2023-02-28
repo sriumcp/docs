@@ -27,7 +27,7 @@ In this tutorial, we focus on A/B testing [an upstream service (backend app/ML m
 
 ## Deploy application
 
-Deploy the client server application. For the client, choose a specific language and deploy the client in that language. For the backend, deploy both variants.
+Deploy the client server application along with a subject. For the client, choose a specific language and deploy the client in that language. For the backend, deploy both variants.
 
 === "Client"
 
@@ -83,10 +83,6 @@ Deploy the client server application. For the client, choose a specific language
     kubectl label svc recommender-candidate iter8.tools/detect=true
     ```
 
-## Create Iter8 specs
-
-Create the Iter8 specs needed to A/B test the application.
-
 === "subject"
 
     Create the `subject` for the `backend` server.
@@ -100,15 +96,27 @@ Create the Iter8 specs needed to A/B test the application.
       labels:
         app.kubernetes.io/managed-by: iter8    
         app.kubernetes.io/component: subject
+        iter8.tools/version: v0.14
     data:
       spec: |
-        gvrs: [svc, deploy]
         variants: 
-        - [recommender-stable, recommender-stable]
-        - [recommender-candidate, recommender-candidate]
+        - - gvr: svc
+            name: recommender-stable
+          - gvr: deploy
+            name: recommender-stable
+        - - gvr: svc
+            name: recommender-candidate
+          - gvr: deploy
+            name: recommender-candidate
+        routing:
+          sdk: true
     immutable: true
     EOF
     ```
+
+## Create Iter8 specs
+
+Create the Iter8 specs needed to A/B test the application.
 
 === "weights"
 
@@ -124,6 +132,7 @@ Create the Iter8 specs needed to A/B test the application.
       labels:
         app.kubernetes.io/managed-by: iter8   
         app.kubernetes.io/component: iter8/weights
+        iter8.tools/version: v0.14
     data:
       spec: |
         # weights are for recommender
@@ -133,9 +142,9 @@ Create the Iter8 specs needed to A/B test the application.
     EOF
     ```
 
-=== "experimentspec"
+=== "experiment"
 
-    Create the `experimentspec`.
+    Create the `experiment`.
 
     ```shell
     cat << EOF | kubectl apply -f -
@@ -145,7 +154,8 @@ Create the Iter8 specs needed to A/B test the application.
       name: abn-test
       labels:
         app.kubernetes.io/managed-by: iter8   
-        app.kubernetes.io/component: iter8/experimentspec
+        app.kubernetes.io/component: iter8/experiment
+        iter8.tools/version: v0.14
     stringData:
       spec: |
         subject: recommender
@@ -277,14 +287,6 @@ Promote variant 2 (candidate) as the latest stable version.
 ```shell
 kubectl set image deployment/recommender-stable \
 abn-sample-backend=iter8/abn-sample-backend:0.14-v2
-```
-
-## Delete variant 2
-
-You can safely delete variant 2 at any point during the A/B testing experiment.
-
-```shell
-kubectl delete svc/recommender-candidate deploy/recommender-candidate
 ```
 
 ## Cleanup

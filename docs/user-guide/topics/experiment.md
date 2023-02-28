@@ -2,7 +2,7 @@
 template: main.html
 ---
 
-# Weightspec Resource
+# Experiment Resource
 
 <!-- An appspec resource is a [Kubernetes configmap](https://kubernetes.io/docs/concepts/configuration/configmap/) that is used to describe an app to the Iter8 service. An example of an appspec resource is as follows.
 
