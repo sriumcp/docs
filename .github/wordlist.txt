@@ -3,7 +3,6 @@ acm
 API
 apis
 ArgoCD
-AutoX
 backend
 benchmarking
 Cha
@@ -88,7 +87,6 @@ custommetrics
 ctx
 dev
 encodedmetric
-expreport
 failured
 getRecommendation
 GetTrack

@@ -35,7 +35,7 @@ iter8 k launch \
 
 ## Metrics
 
-This task creates a built-in [provider](../topics/metrics.md#fully-qualified-names) named `http`. The following metrics are collected by this task:
+This task creates a [provider](../topics/metrics.md#fully-qualified-names) named `http`. The following metrics are collected by this task:
 
 - `http/request-count`: total number of requests sent
 - `http/error-count`: number of error responses

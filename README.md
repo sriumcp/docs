@@ -22,7 +22,7 @@ Iter8 introduces the notion of an experiment, which is a list of configurable ta
 
 Iter8 packs a number of powerful features that facilitate Kubernetes app testing and experimentation. They include the following.
 
-1.  **Generating load and collecting built-in metrics for HTTP and gRPC services.** Simplifies performance testing by eliminating the need to setup and use metrics stores.
+1.  **Generating load and collecting performance metrics for HTTP and gRPC services.** Simplifies performance testing by eliminating the need to setup and use metrics stores.
 2.  **Well-defined notion of service-level objectives (SLOs).** Makes it simple to define and verify SLOs in experiments.
 3.  **Custom metrics.** Enables the use of custom metrics from any metrics store in experiments.
 4.  **Readiness check.** The performance testing portion of the experiment begins only after the service is ready.

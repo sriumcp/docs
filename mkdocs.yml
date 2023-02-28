@@ -117,35 +117,41 @@ nav:
   - Your first experiment: getting-started/your-first-experiment.md
   - Concepts: getting-started/concepts.md
   - Install Iter8: getting-started/install.md
-  - Get help: getting-started/help.md
 - Tutorials:
-  - Load test HTTP with SLOs: tutorials/load-test-http.md
-  - Load test gRPC with SLOs: tutorials/load-test-grpc.md
-  - Chaos injection with SLOs: tutorials/chaos/slo-validation-chaos.md
-  - A/B testing: tutorials/abn/abn.md
-  - Automated experiments: tutorials/autox/autox.md
-  - Custom metrics:
-    - One version: tutorials/custom-metrics/one-version.md
-    - Two or more versions: tutorials/custom-metrics/two-or-more-versions.md
-  - Integrations:
-    - GitHub Actions: tutorials/integrations/ghactions.md
-    - Istio: tutorials/integrations/istio.md
-    - Knative: tutorials/integrations/knative.md
-    - Kserve:
-      - Performance testing:
-        - HTTP: tutorials/integrations/kserve/http.md
-        - gRPC: tutorials/integrations/kserve/grpc.md
-      - Canary testing: tutorials/integrations/kserve/canary-testing.md
-      - Continuous validation: tutorials/integrations/kserve/continuous-validation.md
-      - Other (Iter8 v0.7): tutorials/integrations/kserve/kserve.md
-    - Seldon: tutorials/integrations/seldon.md
-    - Slack:  tutorials/integrations/slack.md
-    - Litmus: tutorials/integrations/litmus.md
-    - Linkerd: tutorials/integrations/linkerd.md
-  - Earlier versions:
-    - Docs for Iter8 v0.8: https://iter8-tools.github.io/iter8/0.8/
-    - Docs for Iter8 v0.7: https://iter8-tools.github.io/iter8/0.7/
+  - A/B testing: 
+    - Quick start: tutorials/abn/quickstart.md
+  # - Performance testing:
+  #   - HTTP: tutorials/load-test-http.md
+  #   - gRPC: tutorials/load-test-grpc.md
+  - Traffic engineering: 
+    - Mirroring: tutorials/traffic-engineering/mirroring.md
+  # - Custom metrics: 
+  #   - Prometheus: tutorials/custom-metrics/prometheus.md
+# - Integrations:
+#   - Kserve:
+#     - Performance testing:
+#       - HTTP: integrations/kserve/http.md
+#       - gRPC: integrations/kserve/grpc.md
+#     - Canary testing: integrations/kserve/canary-testing.md
+#     - Custom metrics: integrations/kserve/custom-metrics.md
+#     - Other (Iter8 v0.7): integrations/kserve/kserve.md
+#   - Knative: integrations/knative.md
+#   - Istio: integrations/istio.md
+#   - Seldon: integrations/seldon.md
+#   - Litmus: integrations/litmus/chaos.md
+#   - Linkerd: integrations/linkerd.md
 - User guide:
+  - Topics:
+    - Appspec: user-guide/topics/appspec.md
+    - Experimentspec: user-guide/topics/experimentspec.md
+    - Weightspec: user-guide/topics/experimentspec.md
+    - Meshspec: user-guide/topics/meshspec.md
+    # - Experiment parameters: user-guide/topics/parameters.md
+    # - Metrics: user-guide/topics/metrics.md
+    - A/B/n testing:
+      - Iter8 service: user-guide/topics/abn/service.md
+      - Iter8 SDK: user-guide/topics/abn/sdk.md
+    # - Namespace and group: user-guide/topics/group.md
   - Tasks:
     - abnmetrics: user-guide/tasks/abnmetrics.md
     - assess: user-guide/tasks/assess.md
@@ -155,28 +161,8 @@ nav:
     - http: user-guide/tasks/http.md
     - slack: user-guide/tasks/slack.md
     - ready: user-guide/tasks/ready.md
-  - Topics:
-    - Experiment parameters: user-guide/topics/parameters.md
-    - Metrics: user-guide/topics/metrics.md
-    - Namespace and group: user-guide/topics/group.md
-    - Automated experiments: user-guide/topics/autox.md
-    - A/B/n testing:
-      - Iter8 service: user-guide/topics/abn/service.md
-      - Appconf resource: user-guide/topics/abn/appconf.md
-      - Iter8 SDK: user-guide/topics/abn/sdk.md
-    - Glossary: user-guide/topics/glossary.md
-  - Commands:
-    - iter8: user-guide/commands/iter8.md
-    - iter8 version: user-guide/commands/iter8_version.md
-    - iter8 k: user-guide/commands/iter8_k.md
-    - iter8 k launch: user-guide/commands/iter8_k_launch.md
-    - iter8 k assert: user-guide/commands/iter8_k_assert.md
-    - iter8 k report: user-guide/commands/iter8_k_report.md
-    - iter8 k delete: user-guide/commands/iter8_k_delete.md
-    - iter8 k log: user-guide/commands/iter8_k_log.md
-- Contributing: contributing.md
-- Roadmap: roadmap.md
-- Community: 
-  - Community: community/community.md
-  - News: community/news.md
-
+# - Glossary: glossary.md
+# - Contributing: contributing.md
+# - Community: 
+#   - Community: community/community.md
+#   - News: community/news.md

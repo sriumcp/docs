@@ -5,40 +5,40 @@ hide:
 - toc
 ---
 
-# Install or upgrade Iter8 CLI
+# Install Iter8
 
---8<-- "docs/getting-started/installbrewbins.md"
+## Install Iter8 CLI
 
---8<-- "docs/getting-started/installghaction.md"
+Use [Go](https://go.dev/ref/mod#go-install) to install Iter8 CLI on your local machine.
 
-# Install or upgrade Iter8 service
+```shell
+go install github.com/iter8-tools/iter8@v0.14
+```
 
-Iter8 service can be installed or upgraded using [Helm](https://helm.sh) as follows.
+## Install or upgrade Iter8 service
+
+Use [Helm](https://helm.sh) to install or upgrade Iter8 service in the Kubernetes cluster.
 
 === "All namespaces"
-    Enable the Iter8 service to work with apps in any namespace.
-
     ```shell
-    helm upgrade iter8-service iter8 --install --repo https://iter8-tools.github.io/hub --set role=svc \
-    --set "appNamespaces=*" --version 0.14.x -n iter8-system --create-namespace
+    helm upgrade --install iter8-service iter8-service \
+    --repo https://iter8-tools.github.io/iter8 --version 0.14.x \
+    --set "appNamespaces=*" -n iter8-system
     ```
+    The above command installs Iter8 service in the `iter8-system` namespace. The service can manage apps in all namespaces.
 
 === "Single namespace"
-    Restrict the Iter8 service to work with apps in a single namespace (`pluto` in the example below).
-
     ```shell
-    helm upgrade iter8-service iter8 --install --repo https://iter8-tools.github.io/hub --set role=svc \
-     --version 0.14.x -n pluto --create-namespace
+    helm upgrade --install iter8-service iter8-service \
+    --repo https://iter8-tools.github.io/iter8 --version 0.14.x \
+    -n pluto
     ```
+    The above command installs Iter8 service in the `pluto` namespace. The service can manage apps in the `pluto` namespace only.
 
 === "Selected namespaces"
-    Restrict the Iter8 service to work with apps inside a pre-existing set of namespace (`mercury`, `earth`, and `pluto` in the example below).
-
     ```shell
-    helm upgrade iter8-service iter8 --install --repo https://iter8-tools.github.io/hub --set role=svc \
-    --set "appNamespaces={mercury,earth,pluto}"  --version 0.14.x -n iter8-system --create-namespace
+    helm upgrade --install iter8-service iter8-service \
+    --repo https://iter8-tools.github.io/iter8 --version 0.14.x \
+    --set "appNamespaces={mercury,earth,pluto}" -n iter8-system
     ```
-
-The use of `iter8-system` namespace with the `-n` flag in the above commands is recommended but not required. For a complete list of Iter8 service configuration options, and for production usage considerations, please see [here](../user-guide/topics/abn/service.md).
-
-
+    The above command installs Iter8 service in the `iter8-system` namespace. The service can manage apps in `mercury`, `earth`, and `pluto` namespaces only.

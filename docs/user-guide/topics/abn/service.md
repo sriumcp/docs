@@ -4,7 +4,7 @@ template: main.html
 
 # Iter8 Service
 
-Iter8 service facilitates A/B/n testing of distributed Kubernetes applications. It keeps track of the [versions](../glossary.md#version) of [apps](../glossary.md#app) that are described using [`appconf` resources](appconf.md), and provides the server-side implementation of the [gRPC](https://grpc.io/)-based [Iter8 SDK](sdk.md) methods.
+<!-- Iter8 service facilitates A/B/n testing of distributed Kubernetes applications. It keeps track of the [versions](../../../glossary.md#version) of [apps](../../../glossary.md#app) that are described using [`appspec` resources](../appspec.md), and provides the server-side implementation of the [gRPC](https://grpc.io/)-based [Iter8 SDK](sdk.md) methods.
 
 Iter8 service can be installed or upgraded as described [here](../../../getting-started/install.md#install-or-upgrade-iter8-service). The install or upgrade can be parameterized through a Helm `values.yaml` file. These parameters are described below.
 
@@ -66,4 +66,4 @@ The default value of the `storage.accessMode` parameter is [`ReadWriteOnce`](htt
 ### Storage volume expansion
 The persistent volume used by the Iter8 service is dynamically provisioned during its installation. If the utilization of this volume reaches its capacity, Iter8 SDK calls will result in errors due to lack of free space. You can solve this issue by using a storage class that supports [volume expansion](https://kubernetes.io/docs/concepts/storage/storage-classes/#allow-volume-expansion), monitoring the persistent volume utilization, and resizing it by [upgrading the Iter8 service](../../../getting-started/install.md#install-or-upgrade-iter8-service) with a higher [storage request](#requests).
 
-
+ -->

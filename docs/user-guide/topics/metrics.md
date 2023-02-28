@@ -6,25 +6,15 @@ template: main.html
 
 ## Provider
 
-A **provider** in Iter8 is a data source that supplies metric values.
-
-## Fully qualified names
-
-Metrics are scoped by providers. Providers have unique names, and within the scope of a provider, metrics have unique names. The fully qualified name of a metric refers to the string of the form `<provider name>/<metric name>`.
-
-Following are some examples of fully qualified metric names that appear in Iter8 tutorials.
+A provider is a source of metrics. Metrics are scoped by providers. Each provider has a unique name, and within the scope of a provider, metrics have unique names. The fully qualified name of a metric refers to the string of the form `<provider name>/<metric name>`. Following are some examples of fully qualified metric names that appear in Iter8 tutorials.
 
 1. `http/latency-mean`
 2. `grpc/error-rate`
 3. `istio-prom/latency-mean`
 
-## Built-in metrics provider
+## Collecting and using metrics
 
-Iter8 has built-in metrics providers, namely, [`http`](../tasks/http.md#metrics) and [`grpc`](../tasks/grpc.md#metrics).
-
-## Custom metrics provider
-
-You can use metrics from any metrics store in Iter8 experiments. Metrics fetched by Iter8 from metrics stores are also referred to as custom metrics. See [here](../tasks/custommetrics.md) to learn more about custom metrics.
+The [`http`](../tasks/http.md#metrics) and [`grpc`](../tasks/grpc.md#metrics) tasks generate latency and error-related metrics for an app during experiments. The [Iter8 SDK](../topics/abn/sdk.md) [`WriteMetric` API](../topics/abn/sdk.md#writemetric) enables clients to record metrics, and the [`abnmetrics` task](../tasks/abnmetrics.md) enables the use of these metrics in Iter8 experiments. The [`custommetrics` task](../tasks/custommetrics.md) enables the use of metrics provided by any [third-party metrics store](../../glossary.md#metrics-store) in experiments.
 
 ## Metric types
 

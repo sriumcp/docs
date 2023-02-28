@@ -36,7 +36,7 @@ In addition, the following fields are defined by this task.
 
 ## Metrics
 
-This task creates a built-in [provider](../topics/metrics.md#fully-qualified-names) named `grpc`. The following metrics are collected by this task:
+This task creates a [provider](../topics/metrics.md#fully-qualified-names) named `grpc`. The following metrics are collected by this task:
 
 - `grpc/request-count`: total number of requests sent
 - `grpc/error-count`: number of error responses

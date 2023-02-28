@@ -4,7 +4,9 @@ template: main.html
 
 # slack
 
-Send the experiment report in a message to a Slack channel using a [incoming webhook](https://api.slack.com/messaging/webhooks). 
+Send the experiment report in a message to a Slack channel using a [incoming webhook](https://api.slack.com/messaging/webhooks). The message will simply contain the experiment report in text form. However, you can easily construct a more sophisticated message by providing your own payload template. This task can be used to provide updates on an experiment over Slack, for example a summary at the end of an experiment.
+
+This task requires the URL of the Slack webhook. See [here](https://api.slack.com/messaging/webhooks) on how to create and obtain one.
 
 ## Usage Example
 
@@ -19,7 +21,6 @@ iter8 k launch \
 --set runner=job
 ```
 
-See [here](../../tutorials/integrations/slack.md#use-iter8-to-send-a-message-to-a-slack-channel) for a more in-depth tutorial.
 
 ## Parameters
 

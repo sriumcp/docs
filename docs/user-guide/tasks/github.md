@@ -22,8 +22,6 @@ iter8 k launch \
 --set runner=job
 ```
 
-See [here](../../tutorials/integrations/ghactions.md#use-iter8-to-trigger-a-github-actions-workflow) for a more in-depth tutorial.
-
 ## Parameters
 
 | Name | Type | Required | Default value | Description |

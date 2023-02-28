@@ -4,61 +4,41 @@ template: main.html
 
 # Iter8
 
-Iter8 is the Kubernetes release optimizer built for DevOps, MLOps, SRE and data science teams. Iter8 makes it easy to ensure that Kubernetes apps and ML models perform well and maximize business value.
+Iter8 is the Kubernetes release optimizer built for DevOps, MLOps, SRE and data science teams. Iter8 detects new versions of apps and ML models and automates the following:
+
+1. A/B/n testing with user stickiness and business metrics
+2. Performance testing for HTTP and gRPC services
+3. Traffic engineering using any service mesh or proxy
+4. Version assessment using metrics from any provider
 
 ## Iter8 experiment
-Iter8 introduces the notion of an *experiment* to facilitate various release optimization use-cases for apps and ML models, as illustrated in the picture below.
+Iter8 introduces the notion of an *experiment* to facilitate various release optimization use-cases for apps and ML models as illustrated in the picture below.
 
 ![Iter8 experiment](../images/iter8-intro-dark.png)
 <!-- {: style="width:80%"} -->
 
-## Use-cases
-
-1.  A/B/n testing of apps and ML models, with traffic splitting, user stickiness, business metrics collection, and assessment.
-2.  Performance testing and service-level objective (SLO) validation of HTTP and gRPC services.
-3.  Canary testing with traffic splitting and SLO validation with metrics from any metrics store (e.g., Prometheus).
-4.  Traffic mirroring and SLO validation with metrics from any metrics store (e.g., Prometheus).
-
 ## How it works
-A brief overview of how Iter8 works for the various use-cases is presented below.
 
-=== "A/B/n testing"
-    Following is an example of Iter8 A/B testing in a distributed application. The **frontend** uses **Iter8 SDK** to route users to **backend versions** and push business metrics. **Iter8 experiment** fetches metrics and assesses versions. **Iter8 service** backs the Iter8 SDK and supports the Iter8 experiment.
+Iter8 consists of three components, namely, Iter8 service, Iter8 SDK (optional), and the Iter8 CLI.
 
-    ![A/B testing](../tutorials/abn/images/abn.backend.png){: style="width:80%"}
+1. **Iter8 service:** runs inside the cluster; detects changes to apps, automates Iter8 experiments, manages service mesh resources, and implements the server-side of Iter8 SDK. Users control Iter8 and app behavior through four types of declarative specifications, namely, `subject`, `experimentspec`, `weights`, and `routingpolicy`.
 
+2. **Iter8 SDK:** gRPC-based APIs embedded within end-user application logic; simplifies A/B/n testing; enables applications to receive or report routing information, and report business metrics.
 
-=== "Performance testing"
-    **Iter8 experiment** checks if the app is ready, generates load, collects metrics, and validates service-level objectives (SLOs).
-    === "HTTP"
-
-        ![HTTP performance testing](images/http.png)
-
-    === "gRPC"
-
-        ![gRPC performance testing](../tutorials/images/grpc.png)
-
-=== "Canary testing"
-    **Iter8 experiment** checks if the app is ready, fetches metrics from a metrics store (e.g., Prometheus), and validates service-level objectives (SLOs). **Service mesh or reverse proxy** handles traffic splitting.
-
-    ![Canary testing](../tutorials/custom-metrics/images/two-or-more-versions.png)
-
-=== "Traffic mirroring"
-    **Iter8 experiment** checks if the app is ready, fetches metrics from a metrics store (e.g., Prometheus), and validates service-level objectives (SLOs). **Service mesh or reverse proxy** handles traffic mirroring.
-    
-    ![Canary testing](../tutorials/custom-metrics/images/two-or-more-versions.png)
+3. **Iter8 CLI:** runs on the local machine; creates Iter8 experiment reports, and validates specs.
 
 ## Features
-
-* Designed to work with any Kubernetes resource (including custom resources), any ML serving/app technology in Kubernetes, any service mesh, any CI/CD platform, and any metrics store
-* Simple business metrics collection using Iter8 SDK
-* Automated experiments with Iter8 AutoX controller. Manual experiments with Iter8 CLI
-* HTML and text reports of experiments with metrics-based version assessment
-* Simple declarative experiment specification
+* Simple, powerful, automated, and declarative app/ML testing and experimentation
+* Flexible integration with Kubernetes eco-system. Use Iter8 with:
+    *   Any Kubernetes resource including custom resources
+    *   Any ML serving/app technology
+    *   Any service mesh, proxy or load balancer
+    *   Any CI/CD/GitOps platform
+    *   Any metrics provider
+* Easy ways to collect and analyze business and performance metrics
+* Intuitive experiment reports
 * Single and multi-loop experiments
-* Iter8 GitHub action
-* GitHub and Slack integrations
-
+* GitHub and Slack notifications
 
 ## Development Status
 Iter8 is actively developed by the community. Iter8 builds on a few awesome open source projects including:
