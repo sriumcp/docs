@@ -4,11 +4,11 @@ template: main.html
 
 # Iter8
 
-Iter8 is the Kubernetes release optimizer built for DevOps, MLOps, SRE and data science teams. Iter8 detects new versions of apps and ML models and automates the following:
+Iter8 is the Kubernetes release optimizer built for DevOps, MLOps, SRE and data science teams. Iter8 detects new variants of apps and ML models in the cluster and automates the following:
 
 1. A/B/n testing with user stickiness and business metrics
 2. Performance testing for HTTP and gRPC services
-3. Traffic engineering using any service mesh or proxy
+3. Traffic engineering using any service mesh, proxy, or load balancer
 4. Version assessment using metrics from any provider
 
 ## Iter8 experiment
@@ -21,7 +21,7 @@ Iter8 introduces the notion of an *experiment* to facilitate various release opt
 
 Iter8 consists of three components, namely, Iter8 service, Iter8 SDK (optional), and the Iter8 CLI.
 
-1. **Iter8 service:** runs inside the cluster; detects changes to apps, automates Iter8 experiments, manages service mesh resources, and implements the server-side of Iter8 SDK. Users control Iter8 and app behavior through three types of declarative specifications, namely, `subject`, `experiment`, and `weights`.
+1. **Iter8 service:** runs inside the cluster; detects changes to apps, automates Iter8 experiments, manages service mesh resources, and implements the server-side of Iter8 SDK. Users control Iter8 and app behavior through two types of declarative specifications, namely, `subject`, and `experiment`.
 
 2. **Iter8 SDK:** gRPC-based APIs embedded within end-user application logic; simplifies A/B/n testing; enables applications to receive or report routing information, and report business metrics.
 

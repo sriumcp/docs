@@ -85,7 +85,7 @@ Deploy the client server application along with a subject. For the client, choos
 
 === "subject"
 
-    Create the `subject` for the `backend` server.
+    Create the `subject` for the `backend` server. The subject also includes variant weights: the number of users mapped to each variant is proportional to its weight.
 
     ```shell
     cat << EOF | kubectl apply -f -
@@ -95,85 +95,60 @@ Deploy the client server application along with a subject. For the client, choos
       name: recommender
       labels:
         app.kubernetes.io/managed-by: iter8    
-        app.kubernetes.io/component: subject
+        iter8.tools/kind: subject
         iter8.tools/version: v0.14
     data:
       spec: |
         variants: 
-        - - gvr: svc
+          # Variant 1 gets 3/4th of the users. Variant 2 gets the rest.
+        - weight: 3
+          resources:
+          - gvr: svc
             name: recommender-stable
           - gvr: deploy
             name: recommender-stable
-        - - gvr: svc
+        - resources:
+          - gvr: svc
             name: recommender-candidate
           - gvr: deploy
             name: recommender-candidate
         routing:
+          # turn on Iter8 SDK. Default is false
           sdk: true
-    immutable: true
     EOF
     ```
 
-## Create Iter8 specs
+## Create experiment
 
-Create the Iter8 specs needed to A/B test the application.
+Create the `experiment`.
 
-=== "weights"
-
-    In Iter8, `weights` is a [configmap](https://kubernetes.io/docs/concepts/configuration/configmap/) that defines weights for variants: the number of users mapped to each variant is proportional to its weight. Create `weights` for `recommender`.
-
-    ```shell
-    cat << EOF | kubectl apply -f -
-    apiVersion: v1
-    kind: ConfigMap
-    metadata:
-      name: recommender-weights
-      # standard Iter8 labels applied on weights
-      labels:
-        app.kubernetes.io/managed-by: iter8   
-        app.kubernetes.io/component: iter8/weights
-        iter8.tools/version: v0.14
-    data:
-      spec: |
-        # weights are for recommender
-        subject: recommender
-        # Variant 1 gets 3/4th of the users. Variant 2 gets the rest.
-        weights: [3, 1]
-    EOF
-    ```
-
-=== "experiment"
-
-    Create the `experiment`.
-
-    ```shell
-    cat << EOF | kubectl apply -f -
-    apiVersion: v1
-    kind: Secret
-    metadata:
-      name: abn-test
-      labels:
-        app.kubernetes.io/managed-by: iter8   
-        app.kubernetes.io/component: iter8/experiment
-        iter8.tools/version: v0.14
-    stringData:
-      spec: |
-        subject: recommender
-        # this experiment has no triggers
-        # so, a single run will be launched and it will never be updated
-        # the experiment run will be garbage collected automatically when the subject is deleted
-        tasks:
-        # Fetch Iter8 SDK metrics from the Iter8 service
-        - name: sdkmetrics
-          subject: recommender
-          # address of the Iter8 service
-          endpoint: iter8-service.iter8-system.svc.cluster.local:50051
-        # this is a multi-loop experiment that uses a cronjob under the covers; 
-        # loops are scheduled once per minute
-        cronjobSchedule: "*/1 * * * *"
-    immutable: true
-    EOF
-    ```
+```shell
+cat << EOF | kubectl apply -f -
+apiVersion: v1
+kind: Secret
+metadata:
+  name: abn-test
+  labels:
+    app.kubernetes.io/managed-by: iter8   
+    iter8.tools/kind: iter8/experiment
+    iter8.tools/version: v0.14
+stringData:
+  spec: |
+    subject: recommender
+    # this experiment has no triggers
+    # so, a single run will be launched and it will never be updated
+    # the experiment run will be garbage collected automatically when the subject is deleted
+    tasks:
+    # Fetch Iter8 SDK metrics from the Iter8 service
+    - name: sdkmetrics
+      subject: recommender
+      # address of the Iter8 service
+      endpoint: iter8-service.iter8-system.svc.cluster.local:50051
+    # this is a multi-loop experiment that uses a cronjob under the covers; 
+    # loops are scheduled once per minute
+    cronjobSchedule: "*/1 * * * *"
+EOF
+```
 
 ## Simulate users
 Your application will receive requests from real users in production. For the purposes of this tutorial, use [this script](https://raw.githubusercontent.com/iter8-tools/docs/main/samples/abn-sample/generate_load.sh) to simulate user traffic.
@@ -297,6 +272,6 @@ Remove the sample application and Iter8 specs.
 kubectl delete \
 deploy/frontend deploy/recommender-stable deploy/recommender-candidate \
 service/frontend service/recommender-stable service/recommender-candidate
-kubectl delete cm/recommender cm/weights secret/abn-test
+kubectl delete cm/recommender secret/abn-test
 ```
 

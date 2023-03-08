@@ -102,22 +102,24 @@ Start by deploying variant 1 of `httpbin` with access logging enabled. Note that
     metadata:
       name: httpbin
       labels:
-        app.kubernetes.io/managed-by: iter8    
-        app.kubernetes.io/component: httpbin
-        iter8.tools/version: v0.14
+        app.kubernetes.io/managed-by: iter8
+        iter8.tools/kind: subject
+        iter8.tools/version: v0.14        
     data:
       spec: |
         variants: 
-        - # this variant has no bearing on the routing configuration, so leave it blank
-        - - gvr: svc
+        - # this variant has no bearing on the routing policy; so blank
+        - resources:
+          - gvr: svc
             name: httpbin-v2
           - gvr: deploy
             name: httpbin-v2
         routing:
-          # routing resources are updated based on the existence or absence of variant 2
-          trigger: variant/2
           # routing resources are provided by a helm chart
-          helm:
+          # ssa suffix implies server-side apply of routing resources
+          helm-ssa:
+            # routing resources are configured based on the presence or absence of variant 2
+            trigger: /2/
             repo: https://iter8-tools.github.io/iter8
             chart: mirror
             version: 0.14.x 
@@ -139,7 +141,6 @@ Start by deploying variant 1 of `httpbin` with access logging enabled. Note that
                 backendRefs:
                 - name: httpbin-v1
                   port: 80
-    immutable: true
     EOF
     ```   
 
