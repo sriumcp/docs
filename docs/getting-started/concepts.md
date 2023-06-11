@@ -3,7 +3,7 @@ template: main.html
 ---
 
 # Iter8
-Iter8 is the Kubernetes release optimizer built for DevOps, MLOps, SRE and data science teams. Iter8 automates traffic control for new versions of apps/ML models in the cluster, and automates validation of their performance and business metrics.
+Iter8 is the Kubernetes release optimizer built for DevOps, MLOps, SRE and data science teams. Iter8 automates traffic routing for new versions of apps/ML models in the cluster, and makes it easy to validate their performance and business metrics.
 
 ## Use-cases
 
@@ -16,7 +16,7 @@ Iter8 simplifies a variety of traffic engineering and metrics-driven validation 
 Iter8 provides three inter-related components to support the above use-cases.
 
 1. CLI for experiments
-2. Traffic controller
+2. Autoroute controller
 3. Client SDK
 
 === "CLI for experiments"
@@ -26,13 +26,19 @@ Iter8 provides three inter-related components to support the above use-cases.
 
     In addition to performance testing and SLO validation for HTTP and gRPC services, Iter8 experiments can also be used to compare versions of an app/ML model in terms of their business metrics, and perform SLO validation using metrics from custom databases (such as Prometheus).
 
-=== "Traffic controller"
+=== "Autoroute controller"
 
-    Iter8 provides a traffic controller that automatically and dynamically reconfigures routing resources based on the state of Kubernetes apps/ML models. The following picture illustrates a Blue-Green rollout scenario that is orchestrated by this traffic controller.
+    Iter8 provides an Autoroute controller that automatically and reliably configures routing resources based on the state of Kubernetes apps/ML models. Autoroute enables three types of route automation.
 
-    ![Blue-Green](../tutorials/integrations/kserve-mm/images/blue-green.png)
+    1. [Blue-green traffic rollout](https://gateway-api.sigs.k8s.io/guides/traffic-splitting/?h=blue#blue-green-traffic-rollout)
+    2. [Canary traffic rollout](https://gateway-api.sigs.k8s.io/guides/traffic-splitting/?h=canary#canary-traffic-rollout)
+    3. Mirroring
     
-    As part of the dynamic reconfiguration of route resources, the Iter8 controller also looks into readiness (for e.g., in KServe modelmesh), availability (for e.g., in Kubernetes deployments) and other relevant status conditions before configuring traffic splits to candidate versions. Similarly, before candidate versions are deleted, the Iter8 controller uses finalizers to first ensure that all traffic flows to the primary version of the ML model. This makes for a very high-degree of reliability and zero-downtime/loss-less rollouts of new app/ML model versions. Users do not get this level of reliability out-of-the-box with a vanilla service mesh.
+    The following picture illustrates a blue-green traffic rollout that is automated by this controller.
+
+    ![Blue-Green](images/blue-green.png)
+    
+    As part of the dynamic reconfiguration of route resources, the Autoroute controller also looks into readiness (for e.g., in KServe modelmesh), availability (for e.g., in Kubernetes deployments) and other relevant status conditions before configuring traffic splits to candidate versions. Similarly, before candidate versions are deleted, the controller uses finalizers to first ensure that all traffic flows to the primary version of the ML model. This makes for a very high-degree of reliability and zero-downtime/loss-less rollouts of new app/ML model versions. Users do not get this level of reliability out-of-the-box with a vanilla service mesh.
 
     With Iter8, the barrier to entry for end-users is significantly reduced. In particular, by just providing names of their ML serving resources, and (optional) traffic weights/labels, end users can get started with their release optimization use cases rapidly. Further, Iter8 does not limit the capabilities of the underlying service mesh in anyway. This means more advanced teams still get to use all the power of the service-mesh alongside the reliability and ease-of-use that Iter8 brings.
 
