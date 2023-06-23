@@ -1,5 +1,9 @@
-Install the latest stable release of the Iter8 CLI as follows.
+# Install
 
-```shell
-go install github.com/iter8-tools/iter8@v0.14
-```
+## Install Iter8
+
+--8<-- "docs/getting-started/installiter8.md"
+
+## Install Iter8 CLI
+
+--8<-- "docs/getting-started/installcli.md"

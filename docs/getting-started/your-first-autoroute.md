@@ -35,9 +35,15 @@ In this tutorial, we use the Istio service mesh to distribute inference requests
 
     The `initialize-rollout` template (with `trafficStrategy: blue-green`) configures the Istio service mesh to route all requests to the primary version of the model (`wisdom-0`). Further, it defines the routing policy that will be used by Iter8 when it observes changes in the models. By default, this routing policy splits inference requests 50-50 between the primary and candidate versions. For detailed configuration options, see the Helm chart.
 
-## Initialize primary (Version 0)
+## Install Iter8
 
-Deploy the primary version of a model using an `InferenceService`:
+--8<-- "docs/getting-started/installiter8.md"
+
+## Initialize primary
+
+### App resources
+
+The `app` for which routing is automated is a KServe ML model. Initialize the resources for the primary version of the model (v0) as follows.
 
 ```shell
 cat <<EOF | kubectl apply -f -
@@ -47,7 +53,6 @@ metadata:
   name: wisdom-0
   labels:
     app.kubernetes.io/name: wisdom
-    app.kubernetes.io/version: v1
     iter8.tools/watch: "true"
   annotations:
     serving.kserve.io/deploymentMode: ModelMesh
@@ -61,12 +66,28 @@ spec:
 EOF
 ```
 
+### Route resources
+
+Initialize route resources for the `app` as follows.
+
+```shell
+helm install route-to-wisdom \ 
+--repo https://iter8-tools.github.io/iter8 autoroute-actions --version 0.2.x \
+--set appType=kserve-modelmesh \
+--set appName=wisdom \
+--set action=initialize-rollout \
+--set strategy=blue-green
+```
+
+
 ??? note "About the primary `InferenceService`"
     Naming the model with the suffix `-0` (and the candidate with the suffix `-1`) simplifies the rollout initialization. However, any name can be specified.
     
     The label `iter8.tools/watch: "true"` lets Iter8 know that it should pay attention to changes to this `InferenceService`.
 
-## Deploy candidate (Version 1)
+## Deploy candidate
+
+### App resources
 
 Deploy a candidate model using a second `InferenceService`:
 
@@ -78,7 +99,6 @@ metadata:
   name: wisdom-1
   labels:
     app.kubernetes.io/name: wisdom
-    app.kubernetes.io/version: v2
     iter8.tools/watch: "true"
   annotations:
     serving.kserve.io/deploymentMode: ModelMesh
@@ -92,10 +112,8 @@ spec:
 EOF
 ```
 
-??? note "About the candidate `InferenceService`"
-    The model name (`wisdom`) and version (`v2`) are recorded using the labels `app.kubernets.io/name` and `app.kubernets.io.version`.
+??? note "Naming conventions for app resources"
 
-    In this tutorial, the model source (field `spec.predictor.model.storageUri`) is the same as for the primary version of the model. In a real world example, this would be different.
 
 ## Verify network configuration changes
 
